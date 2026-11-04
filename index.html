@@ -70,7 +70,8 @@ tfoot .pr{font-size:14px}
 .yr button{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:3px 9px;cursor:pointer;font-family:inherit}
 .yr button:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
 #m{min-width:760px}
-#at{min-width:560px}
+#at{min-width:680px}
+.cut{color:var(--bad);font-size:11px}
 .ah{font-size:14px;margin:16px 0 6px}
 .ac{width:100%;margin-top:3px;background:transparent;border:1px dashed var(--line);border-radius:4px;color:var(--mut);font-size:11px;padding:2px 5px;font-family:inherit}
 .ac:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
@@ -108,7 +109,7 @@ td.off .cell,th.off .nm{opacity:.4}
 <datalist id="acl"></datalist>
 <div class="wrap"><table id="t"></table></div>
 <section class="mon"><div class="mh"><h2>월별·연간 수익</h2><div class="yr"><button id="yp" aria-label="이전 해">◀</button><b id="yv"></b><button id="yn" aria-label="다음 해">▶</button></div></div><div class="wrap"><table id="m"></table></div><div id="ys" class="ys"></div><h3 class="ah">계정별 합계</h3><div class="wrap"><table id="at"></table></div></section>
-<p class="note">난이도 뱃지를 누르면 선택, 다시 누르면 해제됩니다. 주간 보스는 캐릭터당 12마리까지 선택할 수 있고 검마는 월간 보스라 별도입니다. 월별 수익은 현재 선택한 보스를 매주(목요일 초기화) 같게 잡는다고 보고 목요일 횟수를 곱한 값이고, 월간 보스는 월 1회로 계산합니다. 가격은 결정석 가격 ÷ 파티원(소수점 버림)이며 입력 내용은 이 브라우저에 자동 저장됩니다.</p>
+<p class="note">난이도 뱃지를 누르면 선택, 다시 누르면 해제됩니다. 주간 보스는 캐릭터당 12마리까지 선택할 수 있고 검마는 월간 보스라 별도입니다. 월별 수익은 현재 선택한 보스를 매주(목요일 초기화) 같게 잡는다고 보고 목요일 횟수를 곱한 값이고, 월간 보스는 월 1회로 계산합니다. 가격은 결정석 가격 ÷ 파티원(소수점 버림)이며 계정별 합계·월별·연간 수익은 계정당 주간 결정 90개 제한(가격이 높은 결정부터 판매)을 반영한 금액이고, 캐릭터별 표 하단과 캐릭터별 연간 목록은 제한 반영 전 금액입니다. 입력 내용은 이 브라우저에 자동 저장됩니다.</p>
 <script>
 const B=[["자쿰",["c",4040000]],["매그",["h",4280000]],["파풀",["c",6550000]],["피에르",["c",4080000]],["반반",["c",4070000]],["블퀸",["c",4070000]],["벨룸",["c",4640000]],["스우",["n",8350000],["h",48900000],["x",545000000]],["데미안",["n",8750000],["h",46400000]],["가엔슬",["n",12700000],["c",71300000]],["루시드",["e",14900000],["n",17800000],["h",59700000]],["윌",["e",16100000],["n",20500000],["h",73200000]],["더스크",["n",22000000],["c",66300000]],["진힐라",["n",67600000],["h",100000000]],["듄켈",["n",23700000],["h",89600000]],["세렌",["n",167000000],["h",302000000],["x",1840000000]],["칼로스",["e",238000000],["n",479000000],["c",1230000000],["x",4104000000]],["대적자",["e",261000000],["n",532000000],["h",1390000000],["x",4712000000]],["카링",["e",320000000],["n",593000000],["h",1560000000],["x",4845000000]],["흉성",["n",576000000],["h",2678000000]],["벨로나",["e",396000000],["n",824000000],["h",2950000000]],["림보",["n",995000000],["h",2385000000],["x",7500000000]],["발드",["n",1320000000],["h",3078000000],["x",9600000000]],["유피",["n",1560000000],["h",5387000000]],["검마",["h",465000000],["x",5680000000]]];
 const D={e:["이지","#8c8c8c"],n:["노멀","#2aa7c0"],h:["하드","#e0407f"],c:["카오스","#c9a36b"],x:["익스트림","#b3303f"]};
@@ -129,6 +130,9 @@ const wk=c=>{let s=0;for(let b=0;b<WK;b++)s+=price(c,b);return s};
 const mo=c=>price(c,WK);
 const kr=n=>{if(!n)return"-";if(n<1e4)return n.toLocaleString();const j=Math.floor(n/1e12),e=Math.floor(n%1e12/1e8),m=Math.floor(n%1e8/1e4);return((j?j.toLocaleString()+"조 ":"")+(e?e.toLocaleString()+"억 ":"")+(m?m.toLocaleString()+"만":"")).trim()};
 const full=n=>n.toLocaleString();
+const CAP=90;
+function acctGroups(){const G=new Map();S.chars.forEach(c=>{if(!inc(c))return;const a=c.acc||"계정1";if(!G.has(a))G.set(a,{n:0,p:[],m:0});const g=G.get(a);g.n++;g.m+=mo(c);for(let b=0;b<WK;b++)if(c.sel[b])g.p.push(price(c,b))});
+ G.forEach(g=>{g.p.sort((x,y)=>y-x);g.cnt=g.p.length;g.raw=g.p.reduce((a,x)=>a+x,0);g.w=g.p.slice(0,CAP).reduce((a,x)=>a+x,0);g.cut=g.raw-g.w});return G}
 const mpf=x=>S.rate?Math.round(x/1e8*S.rate).toLocaleString():"-";
 const inc=c=>c.inc!==false;
 const wm=v=>(S.rate?`<span class="mpx">${mpf(v)} 메포</span>`:"")+kr(v);
@@ -152,7 +156,7 @@ function render(){
  h+='</tfoot>';
  document.getElementById("t").innerHTML=h;
  document.getElementById("acl").innerHTML=[...new Set(S.chars.map(c=>c.acc||"계정1"))].map(a=>`<option value="${esc(a)}">`).join("");
- const A=S.chars.filter(inc),W=A.reduce((a,c)=>a+wk(c),0),M=A.reduce((a,c)=>a+mo(c),0);
+ const A=S.chars.filter(inc),W=[...acctGroups().values()].reduce((a,g)=>a+g.w,0),M=A.reduce((a,c)=>a+mo(c),0);
  document.getElementById("sum").innerHTML=`<div class="tot"><small>전체 총합 (${A.length}캐릭터)</small><b title="${full(W+M)}">${kr(W+M)}</b></div><div><small>주간 보스</small><b title="${full(W)}">${kr(W)}</b></div><div><small>월간 보스</small><b title="${full(M)}">${kr(M)}</b></div>`;
  months(W,M);save()}
 document.addEventListener("click",e=>{
@@ -185,10 +189,10 @@ function months(W,M){
  document.getElementById("m").innerHTML=h;
  document.getElementById("yv").textContent=y+"년";
  document.getElementById("ys").innerHTML=S.chars.map(c=>{const v=wk(c)*N+mo(c)*12;return`<span${inc(c)?"":' class="off"'}><i>${c.name}${inc(c)?"":" (제외)"}</i>${rt?`<em>${mp(v)} 메포</em>`:""}<b title="${full(v)}">${kr(v)}</b></span>`}).join("");
- const G=new Map();S.chars.forEach(c=>{if(!inc(c))return;const a=c.acc||"계정1";if(!G.has(a))G.set(a,{n:0,w:0,m:0});const g=G.get(a);g.n++;g.w+=wk(c);g.m+=mo(c)});
- let ah=`<thead><tr><th>계정</th><th>캐릭터</th><th>주간 보스 (1주)</th><th>월간 보스 (1회)</th><th>${y}년 합계</th>${rt?"<th>메포 환산</th>":""}</tr></thead><tbody>`,TG={n:0,w:0,m:0,v:0};
- G.forEach((g,a)=>{const v=g.w*N+g.m*12;TG.n+=g.n;TG.w+=g.w;TG.m+=g.m;TG.v+=v;ah+=`<tr><th>${esc(a)}</th><td>${g.n}개</td><td title="${full(g.w)}">${kr(g.w)}</td><td title="${full(g.m)}">${kr(g.m)}</td><td class="gold" title="${full(v)}">${kr(v)}</td>${rt?`<td class="mp">${mp(v)}</td>`:""}</tr>`});
- ah+="</tbody>";if(G.size>1)ah+=`<tfoot><tr><th>전체</th><td>${TG.n}개</td><td>${kr(TG.w)}</td><td>${kr(TG.m)}</td><td class="gold">${kr(TG.v)}</td>${rt?`<td class="mp">${mp(TG.v)}</td>`:""}</tr></tfoot>`;
+ const G=acctGroups();
+ let ah=`<thead><tr><th>계정</th><th>캐릭터</th><th>주간 결정</th><th>주간 보스 (1주)</th><th>월간 보스 (1회)</th><th>${y}년 합계</th>${rt?"<th>메포 환산</th>":""}</tr></thead><tbody>`,TG={n:0,c:0,w:0,m:0,v:0};
+ G.forEach((g,a)=>{const v=g.w*N+g.m*12;TG.n+=g.n;TG.c+=g.cnt;TG.w+=g.w;TG.m+=g.m;TG.v+=v;ah+=`<tr><th>${esc(a)}</th><td>${g.n}개</td><td class="${g.cut?"over":""}">${g.cnt} / ${CAP}</td><td title="${full(g.w)}">${kr(g.w)}${g.cut?`<span class="cut"> (−${kr(g.cut)})</span>`:""}</td><td title="${full(g.m)}">${kr(g.m)}</td><td class="gold" title="${full(v)}">${kr(v)}</td>${rt?`<td class="mp">${mp(v)}</td>`:""}</tr>`});
+ ah+="</tbody>";if(G.size>1)ah+=`<tfoot><tr><th>전체</th><td>${TG.n}개</td><td>${TG.c}개</td><td>${kr(TG.w)}</td><td>${kr(TG.m)}</td><td class="gold">${kr(TG.v)}</td>${rt?`<td class="mp">${mp(TG.v)}</td>`:""}</tr></tfoot>`;
  document.getElementById("at").innerHTML=G.size?ah:"";
  document.getElementById("sum").insertAdjacentHTML("beforeend",`<div class="tot"><small>${y}년 연간 총합</small><b title="${full(T)}">${kr(T)}</b></div>${rt?`<div><small>${y}년 연간 메포</small><b>${mp(T)}</b></div>`:""}`)}
 document.getElementById("ex").onclick=()=>{const d=new Date(),p=n=>String(n).padStart(2,"0"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:"application/json"}));a.download="주보_"+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
