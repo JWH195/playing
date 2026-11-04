@@ -17,6 +17,7 @@ header{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center;padding:14px
 h1{font-size:18px;margin:0 8px 0 0;font-weight:700}
 .sum{display:flex;gap:22px;flex-wrap:wrap}
 .sum div{display:flex;flex-direction:column}
+.sum em{font-style:normal;color:var(--ok);font-size:12px;font-variant-numeric:tabular-nums}
 .sum small{color:var(--mut);font-size:11px}
 .sum b{font-size:16px;font-variant-numeric:tabular-nums}
 .sum .tot b{color:var(--gold);font-size:20px}
@@ -157,7 +158,7 @@ function render(){
  document.getElementById("t").innerHTML=h;
  document.getElementById("acl").innerHTML=[...new Set(S.chars.map(c=>c.acc||"계정1"))].map(a=>`<option value="${esc(a)}">`).join("");
  const A=S.chars.filter(inc),W=[...acctGroups().values()].reduce((a,g)=>a+g.w,0),M=A.reduce((a,c)=>a+mo(c),0);
- document.getElementById("sum").innerHTML=`<div class="tot"><small>전체 총합 (${A.length}캐릭터)</small><b title="${full(W+M)}">${kr(W+M)}</b></div><div><small>주간 보스</small><b title="${full(W)}">${kr(W)}</b></div><div><small>월간 보스</small><b title="${full(M)}">${kr(M)}</b></div>`;
+ document.getElementById("sum").innerHTML=`<div class="tot"><small>주간 보스 합계 (${A.length}캐릭터, 1주)</small><b title="${full(W)}">${kr(W)}</b>${S.rate?`<em>${mpf(W)} 메포</em>`:""}</div><div class="tot"><small>월간 보스 합계 (월 1회)</small><b title="${full(M)}">${kr(M)}</b>${S.rate?`<em>${mpf(M)} 메포</em>`:""}</div><div><small>주간 + 월간 합</small><b title="${full(W+M)}">${kr(W+M)}</b></div>`;
  months(W,M);save()}
 document.addEventListener("click",e=>{
  const t=e.target;
