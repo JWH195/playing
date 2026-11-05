@@ -51,8 +51,10 @@ thead .c0{background:var(--bg)}thead .c1{background:var(--alt)}
 .rm.ask{background:var(--bad);border-color:var(--bad);color:#fff}
 .cell{display:flex;align-items:center;gap:6px;min-width:352px}
 .chips{display:flex;gap:4px;width:214px;flex:none}
-.chip{white-space:nowrap;flex:none;--c:#888;border:1px solid var(--c);background:transparent;color:var(--c);border-radius:11px;font-weight:700;font-size:10.5px;font-family:inherit;padding:2px 7px;cursor:pointer;line-height:1.5}
-.chip.on{background:var(--c);color:#fff}
+.chip,.dc{white-space:nowrap;flex:none;--c:#888;border:1px solid var(--c);background:transparent;color:var(--c);border-radius:11px;font-weight:700;font-size:10.5px;font-family:inherit;padding:2px 7px;cursor:pointer;line-height:1.5}
+.chip.on,.dc.on{background:var(--c);color:#fff}
+.dc{--c:#888;border:1px solid var(--c);background:transparent;color:var(--c);border-radius:11px;font-weight:700;font-size:10.5px;font-family:inherit;padding:2px 7px;cursor:pointer;line-height:1.5}
+.dc.on{cursor:pointer}
 .chip:disabled{opacity:.22;cursor:not-allowed}
 select{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:4px;font-size:12px;padding:1px 2px;width:46px}
 .ph{width:46px}
@@ -96,21 +98,56 @@ td.off .cell,th.off .nm{opacity:.4}
 .ys span{display:flex;gap:16px}
 .ys i{font-style:normal;min-width:110px}
 .ys b{color:var(--fg);font-weight:500}
+.tabs{display:flex;gap:4px;padding:10px 16px 0;border-bottom:1px solid var(--line);padding-top:calc(10px + env(safe-area-inset-top,0px))}
+.tabs button{background:none;border:0;border-bottom:3px solid transparent;color:var(--mut);padding:8px 18px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
+.tabs button.on{color:var(--gold);border-color:var(--gold)}
+.tabs .io{margin-left:auto;align-self:center;padding-bottom:4px}
+.p2{padding:14px 16px}
+.ch{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.ch b{font-size:18px}
+.ch button,.dlg .btns button,.ctabs button{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px 12px;font-size:13px;font-family:inherit;cursor:pointer}
+.ch #ct{margin-left:auto;color:var(--mut)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.wd{text-align:center;color:var(--mut);font-size:12px;padding:4px}.wd.su{color:var(--bad)}.wd.sa{color:#5b9cf5}
+.dy{min-height:100px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 8px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;color:var(--fg);font-family:inherit;cursor:pointer}
+.dy.e{visibility:hidden}.dy.th{background:var(--alt)}.dy.td{border-color:var(--gold)}.dy:hover{border-color:var(--gold)}
+.dn{font-size:13px;color:var(--mut)}.dm{align-self:flex-end;font-weight:700;font-size:14px;color:var(--gold)}
+.ov{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px}.ov[hidden]{display:none}
+.dlg{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;width:min(760px,100%);max-height:88vh;overflow:auto;padding:16px 18px}
+.dlg h3{margin:0 0 10px;font-size:16px}
+.ln{display:flex;gap:8px;align-items:center;padding:4px 0;font-size:13px}.ln.sub{padding-left:14px;color:var(--mut)}.ln .pr{margin-left:auto}
+.dlg .btns{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.dlg .btns button:first-child,.ctabs .on{background:var(--ok);border-color:var(--ok);color:#fff}
+.st{margin:0 0 6px;font-size:12px}
+.lb{color:var(--mut);font-size:11px;margin:2px 0 4px}
+.qa{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 10px;margin:12px 0 10px;border:1px dashed var(--gold);border-radius:8px;background:var(--panel)}
+.qa .lb{margin:0 4px 0 0;color:var(--gold);font-weight:700;font-size:12px}
+.qa button{background:transparent;border:1px solid var(--gold);color:var(--gold);border-radius:6px;padding:5px 10px;font-size:12px;font-family:inherit;cursor:pointer}
+.qa button:hover{background:var(--gold);color:var(--bg)}
+.qa button.rd{border-color:var(--bad);color:var(--bad);margin-left:auto}
+.qa button.rd:hover{background:var(--bad);color:#fff}
+.ctabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.dlg th{text-align:left;font-weight:500}
+@media (max-width:640px){.dy{min-height:62px;padding:4px}.dm{font-size:11px}}
 </style>
 </head>
 <body>
+<nav class="tabs" id="tabs"><button class="on" data-tab="1">주보수익</button><button data-tab="2">일일수익</button><div class="io"><button id="ex" title="현재 데이터를 PC에 파일로 저장">파일로 저장</button><button id="im" title="저장한 파일에서 데이터 불러오기">파일에서 불러오기</button><input type="file" id="fi" accept=".json,application/json" hidden></div></nav>
+<div id="p1">
 <header>
 <h1>주보 수익</h1>
 <div class="sum" id="sum"></div>
 <label class="rt">1억 메소 = <input id="rt" type="number" min="0" step="any" inputmode="decimal" placeholder="예: 3000"> 메포</label>
 <button class="add" id="add">+ 캐릭터 추가</button>
-<div class="io"><button id="ex" title="현재 데이터를 PC에 파일로 저장">파일로 저장</button><button id="im" title="저장한 파일에서 데이터 불러오기">파일에서 불러오기</button><input type="file" id="fi" accept=".json,application/json" hidden></div>
 </header>
 <div id="menu" class="menu" hidden></div>
 <datalist id="acl"></datalist>
 <div class="wrap"><table id="t"></table></div>
 <section class="mon"><div class="mh"><h2>월별·연간 수익</h2><div class="yr"><button id="yp" aria-label="이전 해">◀</button><b id="yv"></b><button id="yn" aria-label="다음 해">▶</button></div></div><div class="wrap"><table id="m"></table></div><div id="ys" class="ys"></div><h3 class="ah">계정별 합계</h3><div class="wrap"><table id="at"></table></div></section>
 <p class="note">난이도 뱃지를 누르면 선택, 다시 누르면 해제됩니다. 주간 보스는 캐릭터당 12마리까지 선택할 수 있고 검마는 월간 보스라 별도입니다. 월별 수익은 현재 선택한 보스를 매주(목요일 초기화) 같게 잡는다고 보고 목요일 횟수를 곱한 값이고, 월간 보스는 월 1회로 계산합니다. 가격은 결정석 가격 ÷ 파티원(소수점 버림)이며 계정별 합계·월별·연간 수익은 계정당 주간 결정 90개 제한(가격이 높은 결정부터 판매)을 반영한 금액이고, 캐릭터별 표 하단과 캐릭터별 연간 목록은 제한 반영 전 금액입니다. 입력 내용은 이 브라우저에 자동 저장됩니다.</p>
+</div>
+<div id="p2" class="p2" hidden><div class="ch"><button id="cp" aria-label="이전 달">◀</button><b id="cmn"></b><button id="cn" aria-label="다음 달">▶</button><span id="ct"></span></div><div id="cal" class="cal"></div><p class="note">날짜를 누르면 그날 잡은 보스와 메소가 나옵니다. 메소는 결정석 가격 ÷ 파티원 기준이며 계정당 90개 제한은 반영하지 않습니다.</p></div>
+<div id="ov" class="ov" hidden><div class="dlg" id="dlg" role="dialog" aria-modal="true"></div></div>
 <script>
 const B=[["자쿰",["c",4040000]],["매그",["h",4280000]],["파풀",["c",6550000]],["피에르",["c",4080000]],["반반",["c",4070000]],["블퀸",["c",4070000]],["벨룸",["c",4640000]],["스우",["n",8350000],["h",48900000],["x",545000000]],["데미안",["n",8750000],["h",46400000]],["가엔슬",["n",12700000],["c",71300000]],["루시드",["e",14900000],["n",17800000],["h",59700000]],["윌",["e",16100000],["n",20500000],["h",73200000]],["더스크",["n",22000000],["c",66300000]],["진힐라",["n",67600000],["h",100000000]],["듄켈",["n",23700000],["h",89600000]],["세렌",["n",167000000],["h",302000000],["x",1840000000]],["칼로스",["e",238000000],["n",479000000],["c",1230000000],["x",4104000000]],["대적자",["e",261000000],["n",532000000],["h",1390000000],["x",4712000000]],["카링",["e",320000000],["n",593000000],["h",1560000000],["x",4845000000]],["흉성",["n",576000000],["h",2678000000]],["벨로나",["e",396000000],["n",824000000],["h",2950000000]],["림보",["n",995000000],["h",2385000000],["x",7500000000]],["발드",["n",1320000000],["h",3078000000],["x",9600000000]],["유피",["n",1560000000],["h",5387000000]],["검마",["h",465000000],["x",5680000000]]];
 const D={e:["이지","#8c8c8c"],n:["노멀","#2aa7c0"],h:["하드","#e0407f"],c:["카오스","#c9a36b"],x:["익스트림","#b3303f"]};
@@ -137,7 +174,7 @@ function acctGroups(){const G=new Map();S.chars.forEach(c=>{if(!inc(c))return;co
 const mpf=x=>S.rate?Math.round(x/1e8*S.rate).toLocaleString():"-";
 const inc=c=>c.inc!==false;
 const wm=v=>(S.rate?`<span class="mpx">${mpf(v)} 메포</span>`:"")+kr(v);
-function render(){
+function render(){ids();
  let h='<thead><tr><th class="b">보스</th>';
  S.chars.forEach((c,i)=>{h+=`<th class="c${i%2}${c.inc===false?" off":""}"><div class="hd"><input type="checkbox" class="ic" data-ic="${i}"${c.inc===false?"":" checked"} title="수익에 포함" aria-label="수익에 포함"><input class="nm" data-i="${i}" value="${c.name.replace(/"/g,"&quot;")}" aria-label="캐릭터 이름"><button class="rm mv" data-mv="${i}" data-dir="-1" title="왼쪽으로 이동" aria-label="왼쪽으로 이동"${i?"":" disabled"}>◀</button><button class="rm mv" data-mv="${i}" data-dir="1" title="오른쪽으로 이동" aria-label="오른쪽으로 이동"${i<S.chars.length-1?"":" disabled"}>▶</button><button class="rm mv" data-cp="${i}" title="이 캐릭터를 복사해서 바로 오른쪽에 추가" aria-label="캐릭터 복사">복사</button><button class="rm${ask===i?" ask":""}" data-rm="${i}">${ask===i?"삭제?":"×"}</button></div><input class="ac" list="acl" data-ac="${i}" value="${esc(c.acc||"계정1")}" placeholder="계정" aria-label="계정 그룹" title="계정 그룹"></th>`});
  h+='</tr></thead><tbody>';
@@ -200,6 +237,38 @@ document.getElementById("ex").onclick=()=>{const d=new Date(),p=n=>String(n).pad
 document.getElementById("im").onclick=()=>document.getElementById("fi").click();
 document.getElementById("fi").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o.chars||!o.chars.length)throw 0;S=o;S.year=S.year||new Date().getFullYear();ask=-1;render()}catch(x){alert("불러올 수 없는 파일입니다.")}};r.readAsText(f);e.target.value=""};
 document.getElementById("rt").oninput=e=>{S.rate=Math.max(0,+e.target.value||0);render()};
+function ids(){const seen=new Set();S.chars.forEach(c=>{if(!c.id||seen.has(c.id))c.id=Math.random().toString(36).slice(2,9);seen.add(c.id)})}
+const LG=()=>S.log||(S.log={});
+const ep=(b,e)=>Math.floor(B[b].slice(1).find(x=>x[0]===e[0])[1]/e[1]);
+const sumE=m=>Object.entries(m||{}).reduce((a,[b,e])=>a+ep(b,e),0);
+const dayT=k=>Object.values(LG()[k]||{}).reduce((a,m)=>a+sumE(m),0);
+const pad=n=>String(n).padStart(2,"0");
+const wkOf=k=>{const[a,b,c]=k.split("-").map(Number),d=new Date(a,b-1,c);d.setDate(d.getDate()-(d.getDay()+3)%7);return`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`};
+function conflict(id,b,k){const mo_=+b>=WK,w=wkOf(k);for(const o in LG()){if(o===k||(mo_?o.slice(0,7)!==k.slice(0,7):wkOf(o)!==w))continue;const m=LG()[o][id];if(m&&m[b])return o}return""}
+const wkCnt=(id,k,d,only)=>{let n=0;const w=wkOf(k);for(const o in LG()){if(o===k||wkOf(o)!==w)continue;const m=LG()[o][id];if(m)for(const b in m)if(!only||+b<WK)n++}const m=d[id];if(m)for(const b in m)if(!only||+b<WK)n++;return n};
+const worldCnt=(a,k)=>S.chars.filter(c=>(c.acc||"계정1")===a).reduce((t,c)=>t+wkCnt(c.id,k,dr,false),0);
+function canAdd(c,b){const o=conflict(c.id,b,dd);if(o)return`${+b>=WK?"이번 달":"이번 주(목~수)"} ${+o.slice(5,7)}월 ${+o.slice(8)}일에 이미 기록됨`;if(+b<WK&&wkCnt(c.id,dd,dr,true)>=12)return"이번 주 주간 보스 12마리 제한 초과";const a=c.acc||"계정1";if(worldCnt(a,dd)>=90)return`${a} 월드 이번 주 결정 90개 제한 초과(검마 포함)`;return""}
+const now=new Date(),ov=document.getElementById("ov"),dl=document.getElementById("dlg");
+let cy=now.getFullYear(),cm=now.getMonth(),dd="",dr={},ec=0;
+const openD=h=>{dl.innerHTML=h;ov.hidden=false};
+const bdg=d=>`<span class="dc on" style="--c:${D[d][1]};cursor:default">${D[d][0]}</span>`;
+function cal(){const n=new Date(cy,cm+1,0).getDate(),f=new Date(cy,cm,1).getDay(),tk=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;let h="",mt=0;"일월화수목금토".split("").forEach((w,i)=>h+=`<div class="wd${i==0?" su":i==6?" sa":""}">${w}</div>`);for(let i=0;i<f;i++)h+='<div class="dy e"></div>';for(let d=1;d<=n;d++){const k=`${cy}-${pad(cm+1)}-${pad(d)}`,t=dayT(k);mt+=t;h+=`<button class="dy${new Date(cy,cm,d).getDay()==4?" th":""}${k===tk?" td":""}" data-day="${k}"><span class="dn">${d}</span><span class="dm" title="${full(t)}">${t?kr(t):""}</span></button>`}document.getElementById("cal").innerHTML=h;document.getElementById("cmn").textContent=`${cy}년 ${cm+1}월`;document.getElementById("ct").innerHTML=`이번 달 합계 <b class="gold">${kr(mt)}</b>`}
+function showDay(k){dd=k;const L=LG()[k]||{};let h=`<h3>${k.replace(/-/g,". ")} 보스 기록</h3>`,tot=0;Object.entries(L).forEach(([id,m])=>{const ks=Object.keys(m);if(!ks.length)return;const c=S.chars.find(x=>x.id===id);h+=`<div class="ln"><b>${c?esc(c.name):"(삭제된 캐릭터)"}</b><span class="pr gold">${kr(sumE(m))}</span></div>`;ks.forEach(b=>{const e=m[b];tot+=ep(b,e);h+=`<div class="ln sub"><span>${B[b][0]}</span>${bdg(e[0])}<span>${e[1]}인</span><span class="pr">${kr(ep(b,e))}</span></div>`})});if(!tot)h+='<p class="note">기록된 보스가 없습니다.</p>';h+=`<div class="ln"><b>하루 합계</b><span class="pr gold" title="${full(tot)}">${kr(tot)}</span></div><div class="btns"><button data-act="edit">수정</button><button data-act="close">닫기</button></div>`;openD(h)}
+function editView(){const c=S.chars[ec],m=dr[c.id]||(dr[c.id]={});let h=`<h3>${dd.replace(/-/g,". ")} 보스 수정</h3><div class="lb">캐릭터 선택</div><div class="ctabs">`;S.chars.forEach((x,i)=>{const n=Object.keys(dr[x.id]||{}).length;h+=`<button class="${i===ec?"on":""}" data-ec="${i}">${esc(x.name)}${n?` (${n})`:""}</button>`});h+='</div><div class="qa"><span class="lb">⚡ 빠른 입력</span><button data-act="fillrest">이 캐릭터 남은 주보 전체 체크</button><button data-act="fill1">이 캐릭터 주보 전체 체크</button><button data-act="fillall">모든 캐릭터 주보 전체 체크</button><button class="rd" data-act="clr">이 캐릭터 선택 해제</button></div>';{const a=c.acc||"계정1",n=wkCnt(c.id,dd,dr,true),w=worldCnt(a,dd);h+=`<div class="lb st">이번 주(목~수) · ${esc(c.name)} 주간 보스 <b class="${n>=12?"over":""}">${n}/12</b> · ${esc(a)} 월드 결정(검마 포함) <b class="${w>=90?"over":""}">${w}/90</b></div>`}h+='<div class="wrap"><table><tbody>';B.forEach((r,b)=>{const e=m[b];h+=`<tr><th>${r[0]}</th><td><div class="chips">`;r.slice(1).forEach(([d])=>h+=`<button class="dc${e&&e[0]===d?" on":""}" style="--c:${D[d][1]}" data-eb="${b}" data-ed="${d}">${D[d][0]}</button>`);h+='</div></td><td>';if(e){h+=`<select data-ep="${b}" aria-label="파티원">`;for(let p=1;p<=maxp(b,e[0]);p++)h+=`<option value="${p}"${e[1]===p?" selected":""}>${p}인</option>`;h+='</select>'}h+=`</td><td class="pr">${e?kr(ep(b,e)):""}</td></tr>`});h+=`</tbody></table></div><div class="ln"><b>하루 합계</b><span class="pr gold">${kr(Object.values(dr).reduce((a,x)=>a+sumE(x),0))}</span></div><div class="btns"><button data-act="ok">확인</button><button data-act="cancel">취소</button></div>`;openD(h)}
+document.addEventListener("click",e=>{const t=e.target;if(t.id==="ov"){ov.hidden=true;return}const x=t.closest("[data-day],[data-tab],[data-ec],[data-eb],[data-act],#cp,#cn");if(!x)return;const q=x.dataset;
+ if(q.tab){const n=+q.tab;document.getElementById("p1").hidden=n!==1;document.getElementById("p2").hidden=n!==2;document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab==n));if(n===2)cal();return}
+ if(x.id==="cp"||x.id==="cn"){cm+=x.id==="cp"?-1:1;if(cm<0){cm=11;cy--}if(cm>11){cm=0;cy++}cal();return}
+ if(q.day){showDay(q.day);return}
+ if(q.ec!==undefined){ec=+q.ec;editView();return}
+ if(q.eb!==undefined){const c=S.chars[ec],m=dr[c.id]||(dr[c.id]={}),b=q.eb,d=q.ed;if(m[b]&&m[b][0]===d)delete m[b];else{if(!m[b]){const why=canAdd(c,b);if(why){alert(`${c.name}: ${B[b][0]} 선택 불가 — ${why}.`);return}}m[b]=[d,m[b]?Math.min(m[b][1],maxp(b,d)):Math.min(c.party[b]||1,maxp(b,d))]}editView();return}
+ if(q.act==="edit"){dr=JSON.parse(JSON.stringify(LG()[dd]||{}));ec=0;editView()}
+ else if(q.act==="cancel")showDay(dd);
+ else if(q.act==="ok"){Object.keys(dr).forEach(id=>{if(!Object.keys(dr[id]).length)delete dr[id]});if(Object.keys(dr).length)LG()[dd]=dr;else delete LG()[dd];save();cal();showDay(dd)}
+ else if(q.act==="fill1"||q.act==="fillrest"||q.act==="fillall"){const sk=[],rest=q.act==="fillrest",fc=c=>{const m=dr[c.id]||(dr[c.id]={});Object.keys(c.sel).forEach(b=>{if(+b>=WK||(rest&&m[b]))return;const why=m[b]?"":canAdd(c,b);if(why){sk.push(c.name+" "+B[b][0]+" ("+why+")");return}m[b]=[c.sel[b],pt(c,b)]})};if(q.act==="fillall")S.chars.filter(inc).forEach(fc);else fc(S.chars[ec]);editView();if(sk.length&&!rest)alert("제한 때문에 제외한 보스:\n"+sk.join("\n"))}
+ else if(q.act==="clr"){delete dr[S.chars[ec].id];editView()}
+ else if(q.act==="close")ov.hidden=true});
+document.addEventListener("change",e=>{const t=e.target;if(t.dataset.ep!==undefined){dr[S.chars[ec].id][t.dataset.ep][1]=+t.value;editView()}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")ov.hidden=true});
 document.getElementById("yp").onclick=()=>{S.year--;render()};
 document.getElementById("yn").onclick=()=>{S.year++;render()};
 render();
