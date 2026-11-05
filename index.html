@@ -1,277 +1,247 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>주보 수익 계산기</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f4f5f8;--alt:#e8ebf2;--panel:#fff;--fg:#1b1e27;--mut:#6b7285;--line:#d6dae4;--gold:#9a6b00;--ok:#1f7a3d;--bad:#c62f3d;color-scheme:light;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181c;--alt:#232a38;--panel:#1e2026;--fg:#f1f2f6;--mut:#8a90a2;--line:#2f333d;--gold:#ffd54a;--ok:#5fd47f;--bad:#ff6b78;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#17181c;--alt:#232a38;--panel:#1e2026;--fg:#f1f2f6;--mut:#8a90a2;--line:#2f333d;--gold:#ffd54a;--ok:#5fd47f;--bad:#ff6b78;color-scheme:dark}
+:root{--bg:#f4f5f8;--alt:#e8ebf2;--panel:#fff;--fg:#1b1e27;--mut:#6b7285;--line:#d6dae4;--gold:#9a6b00;--ok:#1f7a3d;--bad:#c62f3d;color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#17181c;--alt:#232a38;--panel:#1e2026;--fg:#f1f2f6;--mut:#8a90a2;--line:#2f333d;--gold:#ffd54a;--ok:#5fd47f;--bad:#ff6b78;color-scheme:dark}}
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-header{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
-h1{font-size:18px;margin:0 8px 0 0;font-weight:700}
-.sum{display:flex;gap:22px;flex-wrap:wrap}
-.sum div{display:flex;flex-direction:column}
-.sum em{font-style:normal;color:var(--ok);font-size:12px;font-variant-numeric:tabular-nums}
-.sum small{color:var(--mut);font-size:11px}
-.sum b{font-size:16px;font-variant-numeric:tabular-nums}
-.sum .tot b{color:var(--gold);font-size:20px}
-.rt+.add{margin-left:0}
-.add{margin-left:auto;background:var(--ok);color:#fff;border:0;border-radius:6px;padding:8px 14px;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer}
-.menu{position:fixed;z-index:20;min-width:230px;max-height:60vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
-.menu[hidden]{display:none}
-.menu button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--fg);padding:7px 9px;border-radius:5px;font-size:13px;font-family:inherit;cursor:pointer}
-.menu button:hover,.menu button:focus-visible{background:var(--alt);outline:none}
-.menu .nw{color:var(--ok);font-weight:700}
-.menu .mh2{color:var(--mut);font-size:11px;padding:8px 9px 3px;border-top:1px solid var(--line);margin-top:4px}
-.io{display:flex;gap:6px}
-.io button{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:13px;font-family:inherit;cursor:pointer}
-.io button:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
-.add:focus-visible,.chip:focus-visible,.rm:focus-visible,select:focus-visible,.nm:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
-.wrap{overflow-x:auto;max-width:100%}
-table{border-collapse:separate;border-spacing:0;min-width:100%}
-th,td{padding:5px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
-thead th{position:sticky;top:env(safe-area-inset-top,0px);z-index:3;background:var(--bg);border-bottom:2px solid var(--line)}
-.b{position:sticky;left:0;z-index:2;background:var(--bg);text-align:left;font-weight:500;min-width:84px;border-right:1px solid var(--line)}
-thead .b{z-index:4}
-.b small{color:var(--mut);font-size:10px;margin-left:5px}
-.c1{background:var(--alt)}
-thead .c0{background:var(--bg)}thead .c1{background:var(--alt)}
-.hd{display:flex;gap:6px;align-items:center}
-.nm{flex:1;min-width:0;background:transparent;border:1px solid transparent;border-radius:4px;color:var(--gold);font-weight:700;font-size:14px;font-family:inherit;padding:3px 5px}
-.nm:hover{border-color:var(--line)}
-.rm{background:none;border:1px solid var(--line);color:var(--mut);border-radius:4px;font-size:12px;cursor:pointer;padding:2px 7px}
-.mv{padding:2px 5px;font-size:10px}
-.rm:disabled{opacity:.25;cursor:not-allowed}
-.rm.ask{background:var(--bad);border-color:var(--bad);color:#fff}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;font-variant-numeric:tabular-nums;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+button,input,select{font:inherit;color:var(--fg)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+button{cursor:pointer}
+.tabs{display:flex;align-items:flex-end;gap:4px;padding:8px 12px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:8px 14px;color:var(--mut);font-weight:700}
+.tab.on{color:var(--gold);border-color:var(--gold)}
+.sp{flex:1}
+.btn{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:5px 10px;margin:0 0 6px 6px}
+.btn:hover{background:var(--alt)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.mut{color:var(--mut)}small{font-size:11px;color:var(--mut);margin-left:4px}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:14px 12px}
+h1{font-size:20px;margin:0}h2{font-size:16px;margin:0}
+.sm{display:flex;flex-wrap:wrap;gap:20px}.sm small{display:block;margin:0}
+.big{font-size:20px;font-weight:700;color:var(--gold)}.mid{font-size:15px;font-weight:500}
+.rt{margin-left:auto}.rt input{width:70px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+.rel{position:relative}
+.add{margin:0;border-color:var(--gold);font-weight:700}
+.menu{position:absolute;right:0;top:100%;z-index:50;background:var(--panel);border:1px solid var(--line);border-radius:8px;min-width:220px;max-height:60vh;overflow:auto;padding:4px;box-shadow:0 6px 20px #0004}
+.menu button{display:block;width:100%;text-align:left;background:none;border:0;padding:7px 10px;border-radius:5px}
+.menu button:hover{background:var(--alt)}.menu hr{border:0;border-top:1px solid var(--line);margin:4px 0}.mt{font-size:11px;color:var(--mut);padding:2px 10px}
+.tgb{margin:0 12px 6px;text-align:right}.tgb label{cursor:pointer}.wrap.full{max-height:none}
+.wrap{overflow:auto;max-height:80vh;margin:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+table{border-collapse:separate;border-spacing:0}
+.main th,.main td{padding:4px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+.main thead th{position:sticky;top:0;z-index:3;background:var(--panel);vertical-align:top}
+.main .l{position:sticky;left:0;z-index:2;background:var(--panel);text-align:left;font-weight:500;min-width:70px}
+.main thead .l{z-index:4}
+.c0{background:var(--panel)}.c1{background:var(--alt)}
+.main thead th.c0{background:var(--panel)}.main thead th.c1{background:var(--alt)}
+.off{opacity:.4}
+.hr{display:flex;gap:2px;align-items:center}
+.hr{gap:3px}.hr button{border:1px solid var(--line);background:var(--panel);border-radius:4px;padding:1px 5px;font-size:12px}
+.hr button:disabled{opacity:.3;cursor:default}
+.nm{flex:1;min-width:80px;width:80px;font-weight:700;color:var(--gold);background:transparent;border:0;border-bottom:1px solid var(--line)}
+.ac{width:100%;margin-top:3px;font-size:12px;background:transparent;border:1px dashed var(--line);border-radius:4px;padding:1px 5px}
 .cell{display:flex;align-items:center;gap:6px;min-width:352px}
-.chips{display:flex;gap:4px;width:214px;flex:none}
-.chip,.dc{white-space:nowrap;flex:none;--c:#888;border:1px solid var(--c);background:transparent;color:var(--c);border-radius:11px;font-weight:700;font-size:10.5px;font-family:inherit;padding:2px 7px;cursor:pointer;line-height:1.5}
-.chip.on,.dc.on{background:var(--c);color:#fff}
-.dc{--c:#888;border:1px solid var(--c);background:transparent;color:var(--c);border-radius:11px;font-weight:700;font-size:10.5px;font-family:inherit;padding:2px 7px;cursor:pointer;line-height:1.5}
-.dc.on{cursor:pointer}
-.chip:disabled{opacity:.22;cursor:not-allowed}
-select{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:4px;font-size:12px;padding:1px 2px;width:46px}
-.ph{width:46px}
-.pr{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:500;min-width:76px;text-align:right}
-.pr.z{color:var(--mut)}
-tfoot td,tfoot th{border-bottom:0;border-top:1px solid var(--line);font-weight:700}
-tfoot tr:first-child td,tfoot tr:first-child th{border-top:2px solid var(--line)}
-tfoot .pr{font-size:14px}
-.fl{color:var(--mut);font-weight:500}
-.gold{color:var(--gold)}.over{color:var(--bad)}
-.note{padding:12px 16px;color:var(--mut);font-size:12px}
-.mon{padding:20px 16px 8px}
-.mh{display:flex;align-items:center;gap:14px;margin-bottom:8px}
-.mh h2{font-size:16px;margin:0}
-.yr{display:flex;align-items:center;gap:8px}
-.yr button{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:3px 9px;cursor:pointer;font-family:inherit}
-.yr button:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
-#m{min-width:760px}
-#at{min-width:680px}
-.cut{color:var(--bad);font-size:11px}
-.ah{font-size:14px;margin:16px 0 6px}
-.ac{width:100%;margin-top:3px;background:transparent;border:1px dashed var(--line);border-radius:4px;color:var(--mut);font-size:11px;padding:2px 5px;font-family:inherit}
-.ac:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
-#m th,#m td,#at th,#at td{text-align:right;font-variant-numeric:tabular-nums}
-#m th:first-child,#m td:first-child,#at th:first-child,#at td:first-child{text-align:left}
-#m thead th,#at thead th{color:var(--mut);font-weight:500;font-size:12px}
-#m td.dt{color:var(--mut);font-size:11px}
-#m td.tt{min-width:230px}
-.bar{display:block;height:4px;border-radius:2px;background:var(--gold);opacity:.55;margin-top:3px;margin-left:auto}
-#m tfoot td,#m tfoot th,#at tfoot td,#at tfoot th{font-size:14px}
-.rt{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--mut);font-size:13px}
-.rt input{width:92px;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:4px 6px;font-size:13px;font-family:inherit;text-align:right}
-.rt input:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
-#m td.mp,#at td.mp{color:var(--ok);font-weight:500}
-.ys em{font-style:normal;color:var(--ok);min-width:110px;text-align:right}
-.ys .off{opacity:.45}
-td.off .cell,th.off .nm{opacity:.4}
-.ic{width:16px;height:16px;accent-color:var(--gold);cursor:pointer;flex:none}
-.mpx{color:var(--ok);font-weight:500;font-size:13px;margin-right:10px}
-.ys{display:flex;flex-direction:column;gap:5px;padding:10px 0;color:var(--mut);font-size:13px}
-.ys span{display:flex;gap:16px}
-.ys i{font-style:normal;min-width:110px}
-.ys b{color:var(--fg);font-weight:500}
-.tabs{display:flex;gap:4px;padding:10px 16px 0;border-bottom:1px solid var(--line);padding-top:calc(10px + env(safe-area-inset-top,0px))}
-.tabs button{background:none;border:0;border-bottom:3px solid transparent;color:var(--mut);padding:8px 18px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
-.tabs button.on{color:var(--gold);border-color:var(--gold)}
-.tabs .io{margin-left:auto;align-self:center;padding-bottom:4px}
-.p2{padding:14px 16px}
-.ch{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
-.ch b{font-size:18px}
-.ch button,.dlg .btns button,.ctabs button{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px 12px;font-size:13px;font-family:inherit;cursor:pointer}
-.ch #ct{margin-left:auto;color:var(--mut)}
-.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
-.wd{text-align:center;color:var(--mut);font-size:12px;padding:4px}.wd.su{color:var(--bad)}.wd.sa{color:#5b9cf5}
-.dy{min-height:100px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 8px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;color:var(--fg);font-family:inherit;cursor:pointer}
-.dy.e{visibility:hidden}.dy.th{background:var(--alt)}.dy.td{border-color:var(--gold)}.dy:hover{border-color:var(--gold)}
-.dn{font-size:13px;color:var(--mut)}.dm{align-self:flex-end;font-weight:700;font-size:14px;color:var(--gold)}
-.ov{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px}.ov[hidden]{display:none}
-.dlg{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;width:min(760px,100%);max-height:88vh;overflow:auto;padding:16px 18px}
-.dlg h3{margin:0 0 10px;font-size:16px}
-.ln{display:flex;gap:8px;align-items:center;padding:4px 0;font-size:13px}.ln.sub{padding-left:14px;color:var(--mut)}.ln .pr{margin-left:auto}
-.dlg .btns{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
-.dlg .btns button:first-child,.ctabs .on{background:var(--ok);border-color:var(--ok);color:#fff}
-.st{margin:0 0 6px;font-size:12px}
-.lb{color:var(--mut);font-size:11px;margin:2px 0 4px}
-.qa{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 10px;margin:12px 0 10px;border:1px dashed var(--gold);border-radius:8px;background:var(--panel)}
-.qa .lb{margin:0 4px 0 0;color:var(--gold);font-weight:700;font-size:12px}
-.qa button{background:transparent;border:1px solid var(--gold);color:var(--gold);border-radius:6px;padding:5px 10px;font-size:12px;font-family:inherit;cursor:pointer}
-.qa button:hover{background:var(--gold);color:var(--bg)}
-.qa button.rd{border-color:var(--bad);color:var(--bad);margin-left:auto}
-.qa button.rd:hover{background:var(--bad);color:#fff}
-.ctabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
-.dlg th{text-align:left;font-weight:500}
-@media (max-width:640px){.dy{min-height:62px;padding:4px}.dm{font-size:11px}}
-</style>
-</head>
-<body>
-<nav class="tabs" id="tabs"><button class="on" data-tab="1">주보수익</button><button data-tab="2">일일수익</button><div class="io"><button id="ex" title="현재 데이터를 PC에 파일로 저장">파일로 저장</button><button id="im" title="저장한 파일에서 데이터 불러오기">파일에서 불러오기</button><input type="file" id="fi" accept=".json,application/json" hidden></div></nav>
-<div id="p1">
-<header>
-<h1>주보 수익</h1>
-<div class="sum" id="sum"></div>
-<label class="rt">1억 메소 = <input id="rt" type="number" min="0" step="any" inputmode="decimal" placeholder="예: 3000"> 메포</label>
-<button class="add" id="add">+ 캐릭터 추가</button>
-</header>
-<div id="menu" class="menu" hidden></div>
-<datalist id="acl"></datalist>
-<div class="wrap"><table id="t"></table></div>
-<section class="mon"><div class="mh"><h2>월별·연간 수익</h2><div class="yr"><button id="yp" aria-label="이전 해">◀</button><b id="yv"></b><button id="yn" aria-label="다음 해">▶</button></div></div><div class="wrap"><table id="m"></table></div><div id="ys" class="ys"></div><h3 class="ah">계정별 합계</h3><div class="wrap"><table id="at"></table></div></section>
-<p class="note">난이도 뱃지를 누르면 선택, 다시 누르면 해제됩니다. 주간 보스는 캐릭터당 12마리까지 선택할 수 있고 검마는 월간 보스라 별도입니다. 월별 수익은 현재 선택한 보스를 매주(목요일 초기화) 같게 잡는다고 보고 목요일 횟수를 곱한 값이고, 월간 보스는 월 1회로 계산합니다. 가격은 결정석 가격 ÷ 파티원(소수점 버림)이며 계정별 합계·월별·연간 수익은 계정당 주간 결정 90개 제한(가격이 높은 결정부터 판매)을 반영한 금액이고, 캐릭터별 표 하단과 캐릭터별 연간 목록은 제한 반영 전 금액입니다. 입력 내용은 이 브라우저에 자동 저장됩니다.</p>
-</div>
-<div id="p2" class="p2" hidden><div class="ch"><button id="cp" aria-label="이전 달">◀</button><b id="cmn"></b><button id="cn" aria-label="다음 달">▶</button><span id="ct"></span></div><div id="cal" class="cal"></div><p class="note">날짜를 누르면 그날 잡은 보스와 메소가 나옵니다. 메소는 결정석 가격 ÷ 파티원 기준이며 계정당 90개 제한은 반영하지 않습니다.</p></div>
-<div id="ov" class="ov" hidden><div class="dlg" id="dlg" role="dialog" aria-modal="true"></div></div>
+.chips{width:214px;flex:none;white-space:nowrap}
+.chip,.dc{display:inline-block;border:1px solid var(--k);color:var(--k);border-radius:99px;padding:1px 9px;margin-right:4px;font-size:12px;cursor:pointer;white-space:nowrap;user-select:none}
+.chip.on,.dc.on{background:var(--k);color:#fff}
+.chip.dis{opacity:.3;cursor:not-allowed}
+.cell select,.dlg select{width:46px;background:var(--panel);border:1px solid var(--line);border-radius:4px}
+.pr{margin-left:auto;text-align:right;min-width:76px}
+tfoot td,tfoot th{font-weight:700;border-top:1px solid var(--line)}
+.main tfoot .l{position:sticky;left:0}
+section{margin:22px 12px}
+.yn{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.yn button,.cn button{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:2px 10px}
+.tb{width:100%;max-width:900px;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+.tb th,.tb td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:right}
+.tb th:first-child,.tb td:first-child{text-align:left}
+.bar{height:5px;background:var(--gold);border-radius:3px;margin-top:3px}
+.cl{max-width:560px}.cl div{display:flex;gap:12px;padding:4px 0;border-bottom:1px solid var(--line)}.cl span:first-child{flex:1}
+.ac2{background:var(--alt);border-radius:99px;padding:0 8px;margin-left:8px}
+.nb{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 20px 14px 38px;margin:0;max-width:none;color:var(--fg)}.nb li{margin:4px 0}
+.note{color:var(--mut);font-size:12.5px;max-width:900px}.note p{margin:4px 0}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.cal>div{background:var(--panel);min-height:100px;padding:4px 6px;position:relative}
+.cal .h{min-height:0;text-align:center;font-weight:700;background:var(--alt)}
+.cal .su{color:var(--bad)}.cal .sa{color:#3b7de0}
+.cal .d{cursor:pointer}.cal .d:hover{background:var(--alt)}
+.cal .th{background:color-mix(in srgb,var(--gold) 8%,var(--panel))}
+.cal .td{outline:2px solid var(--gold);outline-offset:-2px}
+.cal .am{position:absolute;right:6px;bottom:4px;font-size:12px;color:var(--gold);font-weight:500}
+.ov{position:fixed;inset:0;background:#0007;display:none;align-items:center;justify-content:center;padding:12px;z-index:100}
+.ov.on{display:flex}
+.dlg{width:min(760px,100%);max-height:88vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.dlg h3{margin:0 0 10px}
+.dlg .row{display:flex;gap:10px;align-items:center;padding:3px 0;border-bottom:1px solid var(--line)}
+.dlg .row span:first-child{min-width:90px}.dlg .row .pr{margin-left:auto}
+.cb{display:inline-block;margin:2px 4px 2px 0;border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:4px 10px}
+.cb.on{background:var(--ok);color:#fff;border-color:var(--ok)}
+.qk{border:1px dashed var(--gold);border-radius:8px;padding:8px;margin:10px 0}
+.qk button{border:1px solid var(--gold);background:var(--panel);border-radius:6px;padding:4px 10px;margin:2px 4px 2px 0}
+.qk .r{float:right;color:var(--bad);border-color:var(--bad)}
+.acts{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.acts button{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:6px 16px}
+.acts .p{background:var(--gold);color:var(--bg);border-color:var(--gold);font-weight:700}
+@media(max-width:600px){.cal>div{min-height:62px}}
+</style></head><body>
+<div id="app"></div><div id="ov" class="ov"></div>
+<input type="file" id="file" accept=".json,application/json" hidden>
 <script>
-const B=[["자쿰",["c",4040000]],["매그",["h",4280000]],["파풀",["c",6550000]],["피에르",["c",4080000]],["반반",["c",4070000]],["블퀸",["c",4070000]],["벨룸",["c",4640000]],["스우",["n",8350000],["h",48900000],["x",545000000]],["데미안",["n",8750000],["h",46400000]],["가엔슬",["n",12700000],["c",71300000]],["루시드",["e",14900000],["n",17800000],["h",59700000]],["윌",["e",16100000],["n",20500000],["h",73200000]],["더스크",["n",22000000],["c",66300000]],["진힐라",["n",67600000],["h",100000000]],["듄켈",["n",23700000],["h",89600000]],["세렌",["n",167000000],["h",302000000],["x",1840000000]],["칼로스",["e",238000000],["n",479000000],["c",1230000000],["x",4104000000]],["대적자",["e",261000000],["n",532000000],["h",1390000000],["x",4712000000]],["카링",["e",320000000],["n",593000000],["h",1560000000],["x",4845000000]],["흉성",["n",576000000],["h",2678000000]],["벨로나",["e",396000000],["n",824000000],["h",2950000000]],["림보",["n",995000000],["h",2385000000],["x",7500000000]],["발드",["n",1320000000],["h",3078000000],["x",9600000000]],["유피",["n",1560000000],["h",5387000000]],["검마",["h",465000000],["x",5680000000]]];
-const D={e:["이지","#8c8c8c"],n:["노멀","#2aa7c0"],h:["하드","#e0407f"],c:["카오스","#c9a36b"],x:["익스트림","#b3303f"]};
-const WK=24,LIM=12,KEY="jubo-v1";
-const mk=n=>({name:n,sel:{},party:{},acc:"계정1"});
-const esc=s=>String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
-let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
-if(!S||!S.chars||!S.chars.length)S={chars:[mk("캐릭터1")]};
-let ask=-1;
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
-const base=(c,b)=>{const d=c.sel[b];if(!d)return 0;return B[b].slice(1).find(x=>x[0]===d)[1]};
-const MAX3=["대적자","흉성","림보","발드","유피","벨로나"];
-const maxp=(b,d)=>B[b][0]==="스우"&&d==="x"?2:MAX3.includes(B[b][0])?3:6;
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const WK=24;
+const B=[['자쿰',['c',4040000]],['매그',['h',4280000]],['파풀',['c',6550000]],['피에르',['c',4080000]],['반반',['c',4070000]],['블퀸',['c',4070000]],['벨룸',['c',4640000]],['스우',['n',8350000],['h',48900000],['x',545000000]],['데미안',['n',8750000],['h',46400000]],['가엔슬',['n',12700000],['c',71300000]],['루시드',['e',14900000],['n',17800000],['h',59700000]],['윌',['e',16100000],['n',20500000],['h',73200000]],['더스크',['n',22000000],['c',66300000]],['진힐라',['n',67600000],['h',100000000]],['듄켈',['n',23700000],['h',89600000]],['세렌',['n',167000000],['h',302000000],['x',1840000000]],['칼로스',['e',238000000],['n',479000000],['c',1230000000],['x',4104000000]],['대적자',['e',261000000],['n',532000000],['h',1390000000],['x',4712000000]],['카링',['e',320000000],['n',593000000],['h',1560000000],['x',4845000000]],['흉성',['n',576000000],['h',2678000000]],['벨로나',['e',396000000],['n',824000000],['h',2950000000]],['림보',['n',995000000],['h',2385000000],['x',7500000000]],['발드',['n',1320000000],['h',3078000000],['x',9600000000]],['유피',['n',1560000000],['h',5387000000]],['검마',['h',465000000],['x',5680000000]]];
+const D={e:['이지','#8c8c8c'],n:['노멀','#2aa7c0'],h:['하드','#e0407f'],c:['카오스','#c9a36b'],x:['익스트림','#b3303f']};
+const M3=['대적자','흉성','림보','발드','유피','벨로나'];
+const maxp=(b,d)=>b==7&&d=='x'?2:M3.includes(B[b][0])?3:6;
+const bp=(b,d)=>{const e=B[b].slice(1).find(x=>x[0]==d);return e?e[1]:0};
+const rid=()=>Math.random().toString(36).slice(2,10);
+const newChar=(n,acc)=>({id:rid(),name:'캐릭터'+n,sel:{},party:{},acc:acc||'계정1',inc:true});
+function load(){try{const s=JSON.parse(localStorage.getItem('jubo-v1'));if(s&&Array.isArray(s.chars)&&s.chars.length)return s}catch(e){}return{chars:[newChar(1)],year:new Date().getFullYear(),rate:0,log:{}}}
+let S=load(),tab='a',menu=false,delC=null,pop=null;
+const T0=new Date();let cal={y:T0.getFullYear(),m:T0.getMonth()+1};
+function save(){try{localStorage.setItem('jubo-v1',JSON.stringify(S))}catch(e){}}
+function ids(){const seen=new Set();S.chars.forEach(c=>{if(!c.id||seen.has(c.id))c.id=rid();seen.add(c.id);c.sel=c.sel||{};c.party=c.party||{};c.acc=c.acc||'계정1'});S.log=S.log||{};S.rate=S.rate||0;S.year=S.year||T0.getFullYear()}
+function kr(n){n=Math.floor(n);if(!n)return'-';if(n<1e4)return''+n;const o=[];for(const[v,s]of[[1e12,'조'],[1e8,'억'],[1e4,'만']]){const q=Math.floor(n/v);n%=v;if(q)o.push(q.toLocaleString()+s)}return o.join(' ')}
+const K=n=>`<span title="${Math.floor(n).toLocaleString()}">${kr(n)}</span>`;
+const mp=x=>S.rate>0?`<small class="ok" style="display:block;margin:0">${Math.round(x/1e8*S.rate).toLocaleString()} 메포</small>`:'';
+const mpi=x=>S.rate>0?`<span class="ok">${Math.round(x/1e8*S.rate).toLocaleString()} 메포</span> `:'';
 const pt=(c,b)=>Math.min(c.party[b]||1,maxp(b,c.sel[b]));
-const price=(c,b)=>Math.floor(base(c,b)/pt(c,b));
-const cnt=c=>Object.keys(c.sel).filter(b=>b<WK).length;
+const price=(c,b)=>c.sel[b]?Math.floor(bp(b,c.sel[b])/pt(c,b)):0;
 const wk=c=>{let s=0;for(let b=0;b<WK;b++)s+=price(c,b);return s};
 const mo=c=>price(c,WK);
-const kr=n=>{if(!n)return"-";if(n<1e4)return n.toLocaleString();const j=Math.floor(n/1e12),e=Math.floor(n%1e12/1e8),m=Math.floor(n%1e8/1e4);return((j?j.toLocaleString()+"조 ":"")+(e?e.toLocaleString()+"억 ":"")+(m?m.toLocaleString()+"만":"")).trim()};
-const full=n=>n.toLocaleString();
-const CAP=90;
-function acctGroups(){const G=new Map();S.chars.forEach(c=>{if(!inc(c))return;const a=c.acc||"계정1";if(!G.has(a))G.set(a,{n:0,p:[],m:0});const g=G.get(a);g.n++;g.m+=mo(c);for(let b=0;b<WK;b++)if(c.sel[b])g.p.push(price(c,b))});
- G.forEach(g=>{g.p.sort((x,y)=>y-x);g.cnt=g.p.length;g.raw=g.p.reduce((a,x)=>a+x,0);g.w=g.p.slice(0,CAP).reduce((a,x)=>a+x,0);g.cut=g.raw-g.w});return G}
-const mpf=x=>S.rate?Math.round(x/1e8*S.rate).toLocaleString():"-";
-const inc=c=>c.inc!==false;
-const wm=v=>(S.rate?`<span class="mpx">${mpf(v)} 메포</span>`:"")+kr(v);
-function render(){ids();
- let h='<thead><tr><th class="b">보스</th>';
- S.chars.forEach((c,i)=>{h+=`<th class="c${i%2}${c.inc===false?" off":""}"><div class="hd"><input type="checkbox" class="ic" data-ic="${i}"${c.inc===false?"":" checked"} title="수익에 포함" aria-label="수익에 포함"><input class="nm" data-i="${i}" value="${c.name.replace(/"/g,"&quot;")}" aria-label="캐릭터 이름"><button class="rm mv" data-mv="${i}" data-dir="-1" title="왼쪽으로 이동" aria-label="왼쪽으로 이동"${i?"":" disabled"}>◀</button><button class="rm mv" data-mv="${i}" data-dir="1" title="오른쪽으로 이동" aria-label="오른쪽으로 이동"${i<S.chars.length-1?"":" disabled"}>▶</button><button class="rm mv" data-cp="${i}" title="이 캐릭터를 복사해서 바로 오른쪽에 추가" aria-label="캐릭터 복사">복사</button><button class="rm${ask===i?" ask":""}" data-rm="${i}">${ask===i?"삭제?":"×"}</button></div><input class="ac" list="acl" data-ac="${i}" value="${esc(c.acc||"계정1")}" placeholder="계정" aria-label="계정 그룹" title="계정 그룹"></th>`});
- h+='</tr></thead><tbody>';
- B.forEach((r,b)=>{
-  h+=`<tr><th class="b">${r[0]}${b===WK?"<small>월간</small>":""}</th>`;
-  S.chars.forEach((c,i)=>{
-   const on=c.sel[b],lock=!on&&b<WK&&cnt(c)>=LIM;
-   h+=`<td class="c${i%2}${c.inc===false?" off":""}"><div class="cell"><div class="chips">`;
-   r.slice(1).forEach(([d])=>{h+=`<button class="chip${on===d?" on":""}" style="--c:${D[d][1]}" data-i="${i}" data-b="${b}" data-d="${d}"${lock?" disabled":""}>${D[d][0]}</button>`});
-   h+='</div>';
-   if(on){h+=`<select data-i="${i}" data-p="${b}" aria-label="파티원">`;const mx=maxp(b,on),cp=pt(c,b);for(let p=1;p<=mx;p++)h+=`<option value="${p}"${cp===p?" selected":""}>${p}인</option>`;h+='</select>'}else h+='<span class="ph"></span>';
-   const p=price(c,b);h+=`<span class="pr${p?"":" z"}" title="${full(p)}">${kr(p)}</span></div></td>`});
-  h+='</tr>'});
- h+='</tbody><tfoot>';
- const row=(l,f,cls)=>{let s=`<tr><th class="b fl">${l}</th>`;S.chars.forEach((c,i)=>{s+=`<td class="c${i%2}${c.inc===false?" off":""}"><div class="cell"><span class="pr ${cls||""}">${f(c)}</span></div></td>`});return s+'</tr>'};
- h+=row("주간 합계",c=>wm(wk(c)))+row("월간(검마)",c=>wm(mo(c)))+row("총합",c=>wm(wk(c)+mo(c)),"gold")+row("주간 보스 수",c=>`<span class="${cnt(c)>=LIM?"over":""}">${cnt(c)} / ${LIM}</span>`);
- h+='</tfoot>';
- document.getElementById("t").innerHTML=h;
- document.getElementById("acl").innerHTML=[...new Set(S.chars.map(c=>c.acc||"계정1"))].map(a=>`<option value="${esc(a)}">`).join("");
- const A=S.chars.filter(inc),W=[...acctGroups().values()].reduce((a,g)=>a+g.w,0),M=A.reduce((a,c)=>a+mo(c),0);
- document.getElementById("sum").innerHTML=`<div class="tot"><small>주간 보스 합계 (${A.length}캐릭터, 1주)</small><b title="${full(W)}">${kr(W)}</b>${S.rate?`<em>${mpf(W)} 메포</em>`:""}</div><div class="tot"><small>월간 보스 합계 (월 1회)</small><b title="${full(M)}">${kr(M)}</b>${S.rate?`<em>${mpf(M)} 메포</em>`:""}</div><div><small>주간 + 월간 합</small><b title="${full(W+M)}">${kr(W+M)}</b></div>`;
- months(W,M);save()}
-document.addEventListener("click",e=>{
- const t=e.target;
- if(!menu.hidden&&!menu.contains(t)&&t.id!=="add")menu.hidden=true;
- if(t.id==="add"){if(menu.hidden)openMenu();else menu.hidden=true;return}
- if(t.dataset.nw!==undefined||t.dataset.clone!==undefined){const cl=t.dataset.clone!==undefined,nc=cl?JSON.parse(JSON.stringify(S.chars[+t.dataset.clone])):mk("캐릭터"+(S.chars.length+1));if(cl)nc.name+=" 복사";else nc.acc=(S.chars[S.chars.length-1]||{}).acc||"계정1";menu.hidden=true;S.chars.push(nc);ask=-1;render();const w=document.querySelector(".wrap");w.scrollLeft=w.scrollWidth;return}
- if(t.dataset.rm!==undefined){const i=+t.dataset.rm;if(S.chars.length<2){ask=-1;return}if(ask===i){S.chars.splice(i,1);ask=-1}else ask=i;render();return}
- if(t.dataset.cp!==undefined){const i=+t.dataset.cp,c=JSON.parse(JSON.stringify(S.chars[i]));c.name+=" 복사";S.chars.splice(i+1,0,c);ask=-1;render();return}
- if(t.dataset.mv!==undefined){const i=+t.dataset.mv,j=i+ +t.dataset.dir;if(j<0||j>=S.chars.length)return;const [c]=S.chars.splice(i,1);S.chars.splice(j,0,c);ask=-1;render();return}
- if(t.classList.contains("chip")){const c=S.chars[t.dataset.i],b=t.dataset.b,d=t.dataset.d;if(c.sel[b]===d){delete c.sel[b];delete c.party[b]}else c.sel[b]=d;ask=-1;render()}
-});
-document.addEventListener("change",e=>{
- const t=e.target;
- if(t.classList.contains("ac")){S.chars[t.dataset.ac].acc=t.value.trim()||"계정1";render();return}
- if(t.classList.contains("nm")){S.chars[t.dataset.i].name=t.value.trim()||"캐릭터"+(+t.dataset.i+1);save();return}
- if(t.dataset.ic!==undefined){S.chars[t.dataset.ic].inc=t.checked;render();return}
- if(t.dataset.p!==undefined){S.chars[t.dataset.i].party[t.dataset.p]=+t.value;render()}
-});
-S.year=S.year||new Date().getFullYear();
-const menu=document.getElementById("menu");
-function openMenu(){const r=document.getElementById("add").getBoundingClientRect();let h='<button class="nw" data-nw="1">+ 빈 캐릭터로 추가</button><div class="mh2">기존 캐릭터를 복사해서 추가</div>';S.chars.forEach((c,i)=>{h+=`<button data-clone="${i}">${esc(c.name)} · ${esc(c.acc||"계정1")}</button>`});menu.innerHTML=h;menu.style.top=(r.bottom+6)+"px";menu.style.right=Math.max(8,window.innerWidth-r.right)+"px";menu.hidden=false;menu.querySelector("button").focus()}
-document.addEventListener("keydown",e=>{if(e.key==="Escape")menu.hidden=true});
-function thu(y,m){const a=[],d=new Date(y,m,1);while(d.getMonth()===m){if(d.getDay()===4)a.push(d.getDate());d.setDate(d.getDate()+1)}return a}
-function months(W,M){
- const y=S.year,rt=S.rate||0,mp=x=>rt?Math.round(x/1e8*rt).toLocaleString():"-",ri=document.getElementById("rt");if(document.activeElement!==ri)ri.value=S.rate||"";let h='<thead><tr><th>월</th><th>목요일(보스 초기화)</th><th>주간 보스</th><th>월간 보스</th><th>월 합계</th><th>메포 환산</th></tr></thead><tbody>',R=[],T=0,TW=0,TM=0,N=0,mx=1;
- for(let m=0;m<12;m++){const d=thu(y,m),w=W*d.length,t=w+M;R.push([d,w,t]);T+=t;TW+=w;TM+=M;N+=d.length;mx=Math.max(mx,t)}
- R.forEach(([d,w,t],m)=>{h+=`<tr><th>${m+1}월</th><td class="dt">${d.length}회 (${d.join("·")}일)</td><td title="${full(w)}">${kr(w)}</td><td title="${full(M)}">${kr(M)}</td><td class="tt"><b title="${full(t)}">${kr(t)}</b><span class="bar" style="width:${Math.round(t/mx*100)}%"></span></td><td class="mp">${mp(t)}</td></tr>`});
- h+=`</tbody><tfoot><tr><th>${y}년 합계</th><td class="dt">${N}회</td><td title="${full(TW)}">${kr(TW)}</td><td title="${full(TM)}">${kr(TM)}</td><td class="gold" title="${full(T)}">${kr(T)}</td><td class="mp">${mp(T)}</td></tr></tfoot>`;
- document.getElementById("m").innerHTML=h;
- document.getElementById("yv").textContent=y+"년";
- document.getElementById("ys").innerHTML=S.chars.map(c=>{const v=wk(c)*N+mo(c)*12;return`<span${inc(c)?"":' class="off"'}><i>${c.name}${inc(c)?"":" (제외)"}</i>${rt?`<em>${mp(v)} 메포</em>`:""}<b title="${full(v)}">${kr(v)}</b></span>`}).join("");
- const G=acctGroups();
- let ah=`<thead><tr><th>계정</th><th>캐릭터</th><th>주간 결정</th><th>주간 보스 (1주)</th><th>월간 보스 (1회)</th><th>${y}년 합계</th>${rt?"<th>메포 환산</th>":""}</tr></thead><tbody>`,TG={n:0,c:0,w:0,m:0,v:0};
- G.forEach((g,a)=>{const v=g.w*N+g.m*12;TG.n+=g.n;TG.c+=g.cnt;TG.w+=g.w;TG.m+=g.m;TG.v+=v;ah+=`<tr><th>${esc(a)}</th><td>${g.n}개</td><td class="${g.cut?"over":""}">${g.cnt} / ${CAP}</td><td title="${full(g.w)}">${kr(g.w)}${g.cut?`<span class="cut"> (−${kr(g.cut)})</span>`:""}</td><td title="${full(g.m)}">${kr(g.m)}</td><td class="gold" title="${full(v)}">${kr(v)}</td>${rt?`<td class="mp">${mp(v)}</td>`:""}</tr>`});
- ah+="</tbody>";if(G.size>1)ah+=`<tfoot><tr><th>전체</th><td>${TG.n}개</td><td>${TG.c}개</td><td>${kr(TG.w)}</td><td>${kr(TG.m)}</td><td class="gold">${kr(TG.v)}</td>${rt?`<td class="mp">${mp(TG.v)}</td>`:""}</tr></tfoot>`;
- document.getElementById("at").innerHTML=G.size?ah:"";
- document.getElementById("sum").insertAdjacentHTML("beforeend",`<div class="tot"><small>${y}년 연간 총합</small><b title="${full(T)}">${kr(T)}</b></div>${rt?`<div><small>${y}년 연간 메포</small><b>${mp(T)}</b></div>`:""}`)}
-document.getElementById("ex").onclick=()=>{const d=new Date(),p=n=>String(n).padStart(2,"0"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:"application/json"}));a.download="주보_"+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
-document.getElementById("im").onclick=()=>document.getElementById("fi").click();
-document.getElementById("fi").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o.chars||!o.chars.length)throw 0;S=o;S.year=S.year||new Date().getFullYear();ask=-1;render()}catch(x){alert("불러올 수 없는 파일입니다.")}};r.readAsText(f);e.target.value=""};
-document.getElementById("rt").oninput=e=>{S.rate=Math.max(0,+e.target.value||0);render()};
-function ids(){const seen=new Set();S.chars.forEach(c=>{if(!c.id||seen.has(c.id))c.id=Math.random().toString(36).slice(2,9);seen.add(c.id)})}
-const LG=()=>S.log||(S.log={});
-const ep=(b,e)=>Math.floor(B[b].slice(1).find(x=>x[0]===e[0])[1]/e[1]);
-const sumE=m=>Object.entries(m||{}).reduce((a,[b,e])=>a+ep(b,e),0);
-const dayT=k=>Object.values(LG()[k]||{}).reduce((a,m)=>a+sumE(m),0);
-const pad=n=>String(n).padStart(2,"0");
-const wkOf=k=>{const[a,b,c]=k.split("-").map(Number),d=new Date(a,b-1,c);d.setDate(d.getDate()-(d.getDay()+3)%7);return`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`};
-function conflict(id,b,k){const mo_=+b>=WK,w=wkOf(k);for(const o in LG()){if(o===k||(mo_?o.slice(0,7)!==k.slice(0,7):wkOf(o)!==w))continue;const m=LG()[o][id];if(m&&m[b])return o}return""}
-const wkCnt=(id,k,d,only)=>{let n=0;const w=wkOf(k);for(const o in LG()){if(o===k||wkOf(o)!==w)continue;const m=LG()[o][id];if(m)for(const b in m)if(!only||+b<WK)n++}const m=d[id];if(m)for(const b in m)if(!only||+b<WK)n++;return n};
-const worldCnt=(a,k)=>S.chars.filter(c=>(c.acc||"계정1")===a).reduce((t,c)=>t+wkCnt(c.id,k,dr,false),0);
-function canAdd(c,b){const o=conflict(c.id,b,dd);if(o)return`${+b>=WK?"이번 달":"이번 주(목~수)"} ${+o.slice(5,7)}월 ${+o.slice(8)}일에 이미 기록됨`;if(+b<WK&&wkCnt(c.id,dd,dr,true)>=12)return"이번 주 주간 보스 12마리 제한 초과";const a=c.acc||"계정1";if(worldCnt(a,dd)>=90)return`${a} 월드 이번 주 결정 90개 제한 초과(검마 포함)`;return""}
-const now=new Date(),ov=document.getElementById("ov"),dl=document.getElementById("dlg");
-let cy=now.getFullYear(),cm=now.getMonth(),dd="",dr={},ec=0;
-const openD=h=>{dl.innerHTML=h;ov.hidden=false};
-const bdg=d=>`<span class="dc on" style="--c:${D[d][1]};cursor:default">${D[d][0]}</span>`;
-function cal(){const n=new Date(cy,cm+1,0).getDate(),f=new Date(cy,cm,1).getDay(),tk=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;let h="",mt=0;"일월화수목금토".split("").forEach((w,i)=>h+=`<div class="wd${i==0?" su":i==6?" sa":""}">${w}</div>`);for(let i=0;i<f;i++)h+='<div class="dy e"></div>';for(let d=1;d<=n;d++){const k=`${cy}-${pad(cm+1)}-${pad(d)}`,t=dayT(k);mt+=t;h+=`<button class="dy${new Date(cy,cm,d).getDay()==4?" th":""}${k===tk?" td":""}" data-day="${k}"><span class="dn">${d}</span><span class="dm" title="${full(t)}">${t?kr(t):""}</span></button>`}document.getElementById("cal").innerHTML=h;document.getElementById("cmn").textContent=`${cy}년 ${cm+1}월`;document.getElementById("ct").innerHTML=`이번 달 합계 <b class="gold">${kr(mt)}</b>`}
-function showDay(k){dd=k;const L=LG()[k]||{};let h=`<h3>${k.replace(/-/g,". ")} 보스 기록</h3>`,tot=0;Object.entries(L).forEach(([id,m])=>{const ks=Object.keys(m);if(!ks.length)return;const c=S.chars.find(x=>x.id===id);h+=`<div class="ln"><b>${c?esc(c.name):"(삭제된 캐릭터)"}</b><span class="pr gold">${kr(sumE(m))}</span></div>`;ks.forEach(b=>{const e=m[b];tot+=ep(b,e);h+=`<div class="ln sub"><span>${B[b][0]}</span>${bdg(e[0])}<span>${e[1]}인</span><span class="pr">${kr(ep(b,e))}</span></div>`})});if(!tot)h+='<p class="note">기록된 보스가 없습니다.</p>';h+=`<div class="ln"><b>하루 합계</b><span class="pr gold" title="${full(tot)}">${kr(tot)}</span></div><div class="btns"><button data-act="edit">수정</button><button data-act="close">닫기</button></div>`;openD(h)}
-function editView(){const c=S.chars[ec],m=dr[c.id]||(dr[c.id]={});let h=`<h3>${dd.replace(/-/g,". ")} 보스 수정</h3><div class="lb">캐릭터 선택</div><div class="ctabs">`;S.chars.forEach((x,i)=>{const n=Object.keys(dr[x.id]||{}).length;h+=`<button class="${i===ec?"on":""}" data-ec="${i}">${esc(x.name)}${n?` (${n})`:""}</button>`});h+='</div><div class="qa"><span class="lb">⚡ 빠른 입력</span><button data-act="fillrest">이 캐릭터 남은 주보 전체 체크</button><button data-act="fill1">이 캐릭터 주보 전체 체크</button><button data-act="fillall">모든 캐릭터 주보 전체 체크</button><button class="rd" data-act="clr">이 캐릭터 선택 해제</button></div>';{const a=c.acc||"계정1",n=wkCnt(c.id,dd,dr,true),w=worldCnt(a,dd);h+=`<div class="lb st">이번 주(목~수) · ${esc(c.name)} 주간 보스 <b class="${n>=12?"over":""}">${n}/12</b> · ${esc(a)} 월드 결정(검마 포함) <b class="${w>=90?"over":""}">${w}/90</b></div>`}h+='<div class="wrap"><table><tbody>';B.forEach((r,b)=>{const e=m[b];h+=`<tr><th>${r[0]}</th><td><div class="chips">`;r.slice(1).forEach(([d])=>h+=`<button class="dc${e&&e[0]===d?" on":""}" style="--c:${D[d][1]}" data-eb="${b}" data-ed="${d}">${D[d][0]}</button>`);h+='</div></td><td>';if(e){h+=`<select data-ep="${b}" aria-label="파티원">`;for(let p=1;p<=maxp(b,e[0]);p++)h+=`<option value="${p}"${e[1]===p?" selected":""}>${p}인</option>`;h+='</select>'}h+=`</td><td class="pr">${e?kr(ep(b,e)):""}</td></tr>`});h+=`</tbody></table></div><div class="ln"><b>하루 합계</b><span class="pr gold">${kr(Object.values(dr).reduce((a,x)=>a+sumE(x),0))}</span></div><div class="btns"><button data-act="ok">확인</button><button data-act="cancel">취소</button></div>`;openD(h)}
-document.addEventListener("click",e=>{const t=e.target;if(t.id==="ov"){ov.hidden=true;return}const x=t.closest("[data-day],[data-tab],[data-ec],[data-eb],[data-act],#cp,#cn");if(!x)return;const q=x.dataset;
- if(q.tab){const n=+q.tab;document.getElementById("p1").hidden=n!==1;document.getElementById("p2").hidden=n!==2;document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab==n));if(n===2)cal();return}
- if(x.id==="cp"||x.id==="cn"){cm+=x.id==="cp"?-1:1;if(cm<0){cm=11;cy--}if(cm>11){cm=0;cy++}cal();return}
- if(q.day){showDay(q.day);return}
- if(q.ec!==undefined){ec=+q.ec;editView();return}
- if(q.eb!==undefined){const c=S.chars[ec],m=dr[c.id]||(dr[c.id]={}),b=q.eb,d=q.ed;if(m[b]&&m[b][0]===d)delete m[b];else{if(!m[b]){const why=canAdd(c,b);if(why){alert(`${c.name}: ${B[b][0]} 선택 불가 — ${why}.`);return}}m[b]=[d,m[b]?Math.min(m[b][1],maxp(b,d)):Math.min(c.party[b]||1,maxp(b,d))]}editView();return}
- if(q.act==="edit"){dr=JSON.parse(JSON.stringify(LG()[dd]||{}));ec=0;editView()}
- else if(q.act==="cancel")showDay(dd);
- else if(q.act==="ok"){Object.keys(dr).forEach(id=>{if(!Object.keys(dr[id]).length)delete dr[id]});if(Object.keys(dr).length)LG()[dd]=dr;else delete LG()[dd];save();cal();showDay(dd)}
- else if(q.act==="fill1"||q.act==="fillrest"||q.act==="fillall"){const sk=[],rest=q.act==="fillrest",fc=c=>{const m=dr[c.id]||(dr[c.id]={});Object.keys(c.sel).forEach(b=>{if(+b>=WK||(rest&&m[b]))return;const why=m[b]?"":canAdd(c,b);if(why){sk.push(c.name+" "+B[b][0]+" ("+why+")");return}m[b]=[c.sel[b],pt(c,b)]})};if(q.act==="fillall")S.chars.filter(inc).forEach(fc);else fc(S.chars[ec]);editView();if(sk.length&&!rest)alert("제한 때문에 제외한 보스:\n"+sk.join("\n"))}
- else if(q.act==="clr"){delete dr[S.chars[ec].id];editView()}
- else if(q.act==="close")ov.hidden=true});
-document.addEventListener("change",e=>{const t=e.target;if(t.dataset.ep!==undefined){dr[S.chars[ec].id][t.dataset.ep][1]=+t.value;editView()}});
-document.addEventListener("keydown",e=>{if(e.key==="Escape")ov.hidden=true});
-document.getElementById("yp").onclick=()=>{S.year--;render()};
-document.getElementById("yn").onclick=()=>{S.year++;render()};
+const cnt=c=>Object.keys(c.sel).filter(b=>b<WK).length;
+const cn=id=>S.chars.find(c=>c.id==id);
+function groups(){const g={};S.chars.forEach(c=>{if(c.inc===false)return;const o=g[c.acc]=g[c.acc]||{a:c.acc,n:0,p:[],m:0};o.n++;o.m+=mo(c);for(let b=0;b<WK;b++)if(c.sel[b])o.p.push(price(c,b))});Object.values(g).forEach(o=>{o.p.sort((x,y)=>y-x);o.cnt=o.p.length;o.w=o.p.slice(0,90).reduce((x,y)=>x+y,0);o.cut=o.p.slice(90).reduce((x,y)=>x+y,0)});return g}
+function thu(y,m){const r=[],n=new Date(y,m,0).getDate();for(let d=1;d<=n;d++)if(new Date(y,m-1,d).getDay()==4)r.push(d);return r}
+const p2=n=>String(n).padStart(2,'0'),fd=(y,m,d)=>y+'-'+p2(m)+'-'+p2(d);
+function wkOf(ds){const[y,m,d]=ds.split('-').map(Number),t=new Date(y,m-1,d);t.setDate(t.getDate()-(t.getDay()+3)%7);return fd(t.getFullYear(),t.getMonth()+1,t.getDate())}
+const md=ds=>{const[,m,d]=ds.split('-');return(+m)+'월 '+(+d)+'일'};
+
+/* ---------- 주보수익 ---------- */
+function nav(){return`<nav class="tabs"><button class="tab${tab=='a'?' on':''}" data-a="tab" data-v="a">주보수익</button><button class="tab${tab=='d'?' on':''}" data-a="tab" data-v="d">일일수익</button><span class="sp"></span><button class="btn" data-a="save">파일로 저장</button><button class="btn" data-a="load">파일에서 불러오기</button></nav>`}
+function main(){
+const g=groups(),gs=Object.values(g),W=gs.reduce((x,o)=>x+o.w,0),Mo=gs.reduce((x,o)=>x+o.m,0),ms=[...Array(12)].map((_,i)=>thu(S.year,i+1)),N=ms.reduce((x,a)=>x+a.length,0),Y=W*N+Mo*12,inc=S.chars.filter(c=>c.inc!==false);
+let h=`<header><h1>주보 수익</h1><div class="sm"><div class="big">${K(W)}<small>주간 보스 합계 (${inc.length}캐릭터, 1주)</small>${mp(W)}</div><div class="big">${K(Mo)}<small>월간 보스 합계 (월 1회)</small>${mp(Mo)}</div><div class="mid">${K(W+Mo)}<small>주간 + 월간 합</small></div><div class="mid">${K(Y)}<small>${S.year}년 연간 총합</small>${mp(Y)}</div></div>
+<label class="rt">1억 메소 = <input type="number" min="0" data-k="rate" data-a="rate" value="${S.rate||''}"> 메포</label>
+<div class="rel"><button class="btn add" data-a="add">+ 캐릭터 추가</button>${menu?`<div class="menu"><button class="ok" data-a="addnew">+ 빈 캐릭터로 추가</button><hr><div class="mt">기존 캐릭터를 복사해서 추가</div>${S.chars.map((c,i)=>`<button data-a="addcp" data-i="${i}">${esc(c.name)} · ${esc(c.acc)}</button>`).join('')}</div>`:''}</div></header>`;
+const accs=[...new Set(S.chars.map(c=>c.acc))];
+h+=`<datalist id="accs">${accs.map(a=>`<option value="${esc(a)}">`).join('')}</datalist><div class="tgb"><label><input type="checkbox" data-a="exp" ${S.exp?'checked':''}> 보스 전체 펼쳐서 보기 <small>(끄면 표 안에서 스크롤)</small></label></div><div class="wrap${S.exp?' full':''}"><table class="main"><thead><tr><th class="l"></th>`+S.chars.map((c,i)=>`<th class="c${i%2}${c.inc===false?' off':''}"><div class="hr"><input type="checkbox" data-a="inc" data-i="${i}" ${c.inc!==false?'checked':''} title="수익 포함"><input class="nm" data-k="n${i}" data-a="nm" data-i="${i}" value="${esc(c.name)}"><button data-a="mv" data-i="${i}" data-v="-1" ${i==0?'disabled':''}>◀</button><button data-a="mv" data-i="${i}" data-v="1" ${i==S.chars.length-1?'disabled':''}>▶</button><button data-a="cp" data-i="${i}">복사</button><button data-a="del" data-i="${i}" class="${delC==i?'bad':''}" ${S.chars.length<2?'disabled':''}>${delC==i?'삭제?':'×'}</button></div><input class="ac" list="accs" data-k="a${i}" data-a="acc" data-i="${i}" value="${esc(c.acc)}" placeholder="계정"></th>`).join('')+'</tr></thead><tbody>';
+B.forEach((b,bi)=>{h+=`<tr><td class="l">${b[0]}${bi==WK?'<small>월간</small>':''}</td>`+S.chars.map((c,ci)=>{const s=c.sel[bi],full=bi<WK&&!s&&cnt(c)>=12;return`<td class="c${ci%2}${c.inc===false?' off':''}"><div class="cell"><div class="chips">`+b.slice(1).map(x=>`<span class="chip${s==x[0]?' on':''}${full?' dis':''}" style="--k:${D[x[0]][1]}" data-a="chip" data-i="${ci}" data-b="${bi}" data-d="${x[0]}">${D[x[0]][0]}</span>`).join('')+'</div>'+(s?`<select data-a="pty" data-i="${ci}" data-b="${bi}">${[...Array(maxp(bi,s))].map((_,j)=>`<option value="${j+1}"${pt(c,bi)==j+1?' selected':''}>${j+1}인</option>`).join('')}</select>`:'')+`<span class="pr">${s?K(price(c,bi)):''}</span></div></td>`}).join('')+'</tr>'});
+h+='</tbody><tfoot>'+[['주간 합계',c=>wk(c)],['월간(검마)',c=>mo(c)],['총합',c=>wk(c)+mo(c)]].map(([n,f])=>`<tr><th class="l">${n}</th>`+S.chars.map((c,i)=>`<td class="c${i%2}${c.inc===false?' off':''}" style="text-align:right">${mpi(f(c))}${K(f(c))}</td>`).join('')+'</tr>').join('')+`<tr><th class="l">주간 보스 수</th>`+S.chars.map((c,i)=>`<td class="c${i%2}${c.inc===false?' off':''}" style="text-align:right"><span class="${cnt(c)>=12?'bad':''}">${cnt(c)} / 12</span></td>`).join('')+'</tr></tfoot></table></div>';
+/* 월별 */
+const tots=ms.map(a=>W*a.length+Mo),mx=Math.max(...tots,1);
+h+=`<section><div class="yn"><h2>월별·연간 수익</h2><button data-a="yr" data-v="-1">◀</button><b>${S.year}년</b><button data-a="yr" data-v="1">▶</button></div><div class="wrap" style="margin:0;max-width:900px"><table class="tb"><thead><tr><th>월</th><th>목요일(보스 초기화)</th><th>주간 보스</th><th>월간 보스</th><th>월 합계</th>${S.rate>0?'<th>메포 환산</th>':''}</tr></thead><tbody>`+ms.map((a,i)=>`<tr><td>${i+1}월</td><td>${a.length}회 (${a.join('·')}일)</td><td>${K(W*a.length)}</td><td>${K(Mo)}</td><td>${K(tots[i])}<div class="bar" style="width:${Math.round(tots[i]/mx*100)}%"></div></td>${S.rate>0?`<td>${mpi(tots[i])}</td>`:''}</tr>`).join('')+`</tbody><tfoot><tr><td>연간 합계</td><td>${N}회</td><td>${K(W*N)}</td><td>${K(Mo*12)}</td><td>${K(Y)}</td>${S.rate>0?`<td>${mpi(Y)}</td>`:''}</tr></tfoot></table></div></section>`;
+const cv=S.chars.map(c=>wk(c)*N+mo(c)*12),cm=Math.max(...cv,1);
+h+=`<section><h2 style="margin-bottom:6px">캐릭터별 연간 수익</h2><div class="wrap" style="margin:0;max-width:720px"><table class="tb"><thead><tr><th>캐릭터</th><th>연간 메소</th>${S.rate>0?'<th>연간 메포</th>':''}</tr></thead><tbody>`+S.chars.map((c,i)=>`<tr class="${c.inc===false?'off':''}"><td><b>${esc(c.name)}</b><small class="ac2">${esc(c.acc)}</small>${c.inc===false?' <small>(제외)</small>':''}</td><td>${K(cv[i])}<div class="bar" style="width:${Math.round(cv[i]/cm*100)}%;margin-left:auto"></div></td>${S.rate>0?`<td class="ok">${Math.round(cv[i]/1e8*S.rate).toLocaleString()} 메포</td>`:''}</tr>`).join('')+`</tbody></table></div></section>`;
+h+=`<section><h2 style="margin-bottom:6px">계정별 합계</h2><div class="wrap" style="margin:0;max-width:900px"><table class="tb"><thead><tr><th>계정</th><th>캐릭터</th><th>주간 결정</th><th>주간 보스(1주)</th><th>월간 보스(1회)</th><th>연간 합계</th>${S.rate>0?'<th>메포 환산</th>':''}</tr></thead><tbody>`+gs.map(o=>`<tr><td>${esc(o.a)}</td><td>${o.n}</td><td class="${o.cnt>90?'bad':''}">${o.cnt} / 90</td><td>${K(o.w)}${o.cut?` <small class="bad">(−${kr(o.cut)})</small>`:''}</td><td>${K(o.m)}</td><td>${K(o.w*N+o.m*12)}</td>${S.rate>0?`<td class="ok">${Math.round((o.w*N+o.m*12)/1e8*S.rate).toLocaleString()} 메포</td>`:''}</tr>`).join('')+(gs.length>1?`<tr style="font-weight:700"><td>전체</td><td>${inc.length}</td><td>${gs.reduce((x,o)=>x+o.cnt,0)}</td><td>${K(W)}</td><td>${K(Mo)}</td><td>${K(Y)}</td>${S.rate>0?`<td class="ok">${Math.round(Y/1e8*S.rate).toLocaleString()} 메포</td>`:''}</tr>`:'')+`</tbody></table></div></section>`;
+h+=`<section><ul class="nb"><li>보스 난이도 뱃지를 클릭해 선택하고, 이미 선택된 뱃지를 다시 클릭하면 해제됩니다.</li><li>캐릭터당 주간 보스는 최대 12마리까지 선택할 수 있으며(검은 마법사 제외), 같은 계정(월드) 내 주간 결정석은 높은 가격순 상위 90개까지만 주간·연간 합계에 반영됩니다.</li><li>월별 계산은 해당 월의 목요일(주간 보스 초기화일) 횟수 × 주간 보스 수익에 월간 보스(월 1회)를 더해 산출합니다.</li><li>모든 변경 사항은 브라우저(localStorage)에 자동 저장되며, 상단 버튼으로 JSON 파일 백업 및 복원이 가능합니다.</li></ul></section>`;
+return h}
+
+/* ---------- 일일수익 ---------- */
+function dayTot(ds){let t=0;const l=S.log[ds]||{};for(const c in l)for(const b in l[c])t+=Math.floor(bp(b,l[c][b][0])/l[c][b][1]);return t}
+function daily(){
+const{y,m}=cal,first=new Date(y,m-1,1).getDay(),n=new Date(y,m,0).getDate(),today=fd(T0.getFullYear(),T0.getMonth()+1,T0.getDate());let tot=0,cells='';
+['일','월','화','수','목','금','토'].forEach((w,i)=>cells+=`<div class="h${i==0?' su':i==6?' sa':''}">${w}</div>`);
+for(let i=0;i<first;i++)cells+='<div></div>';
+for(let d=1;d<=n;d++){const ds=fd(y,m,d),t=dayTot(ds);tot+=t;cells+=`<div class="d${new Date(y,m-1,d).getDay()==4?' th':''}${ds==today?' td':''}" data-a="day" data-v="${ds}">${d}<span class="am">${t?K(t):''}</span></div>`}
+return`<header><h1>일일수익</h1><div class="yn" style="margin:0"><button data-a="cm" data-v="-1">◀</button><b>${y}년 ${m}월</b><button data-a="cm" data-v="1">▶</button></div><div class="big">${K(tot)}<small>이번 달 합계</small></div></header><section style="margin-top:0"><div class="cal">${cells}</div><ul class="nb"><li>달력의 날짜를 클릭하면 그날 처치한 보스 기록을 확인하거나 수정할 수 있습니다.</li><li>빠른 입력 기능으로 주보수익 탭에 설정해 둔 캐릭터별 주간 보스 구성을 한 번에 불러올 수 있습니다.</li><li>주간 초기화 기준(목~수) 캐릭터당 주간 보스 12마리, 같은 계정(월드) 주간 결정석 90개(검마 포함) 및 중복 처치 제한이 자동으로 검사됩니다.</li></ul></section>`}
+function others(date,f){const w=wkOf(date);for(const d in S.log)if(d!=date&&wkOf(d)==w)f(d,S.log[d])}
+function wkn(cid,date,dr){let n=0;others(date,(d,l)=>{const e=l[cid];if(e)for(const k in e)if(k<WK)n++});for(const k in dr[cid]||{})if(k<WK)n++;return n}
+function wld(cid,date,dr){const a=cn(cid).acc;let n=0;for(const x of S.chars)if(x.acc==a){others(date,(d,l)=>{if(l[x.id])n+=Object.keys(l[x.id]).length});n+=Object.keys(dr[x.id]||{}).length}return n}
+function canAdd(cid,b,date,dr){
+const w=wkOf(date),ym=date.slice(0,7);
+for(const d in S.log){if(d==date)continue;const e=S.log[d][cid];if(!e||!e[b])continue;
+if(b==WK){if(d.slice(0,7)==ym)return'이번 달 '+md(d)+'에 이미 기록됨'}else if(wkOf(d)==w)return'이번 주(목~수) '+md(d)+'에 이미 기록됨'}
+if(b<WK&&wkn(cid,date,dr)>=12)return'이번 주 주간 보스 12마리 제한 초과';
+if(wld(cid,date,dr)>=90)return'계정 월드 이번 주 결정 90개 제한 초과(검마 포함)';
+return''}
+function fill(cid,over){const c=cn(cid),dr=pop.dr,f=[];dr[cid]=dr[cid]||{};
+for(const b in c.sel){if(b>=WK)continue;const d=c.sel[b],p=pt(c,b),ex=dr[cid][b];
+if(ex){if(over)dr[cid][b]=[d,p];continue}
+const r=canAdd(cid,+b,pop.date,dr);if(r){f.push(c.name+' '+B[b][0]+' ('+r+')');continue}dr[cid][b]=[d,p]}return f}
+function popup(){
+const ds=pop.date,[y,m,d]=ds.split('-');let h=`<div class="dlg"><h3>${y}. ${m}. ${d} 보스 기록</h3>`;
+if(!pop.edit){
+const l=S.log[ds]||{},ks=Object.keys(l).filter(k=>Object.keys(l[k]).length);let all=0;
+if(!ks.length)h+='<p class="mut">기록된 보스가 없습니다.</p>';
+ks.forEach(k=>{const c=cn(k),es=Object.keys(l[k]).sort((a,b)=>a-b),sub=es.reduce((s,b)=>s+Math.floor(bp(b,l[k][b][0])/l[k][b][1]),0);all+=sub;
+h+=`<div style="margin-top:8px"><b>${c?esc(c.name):'(삭제된 캐릭터)'}</b> <small>소계 ${K(sub)}</small></div>`+es.map(b=>{const[dd,p]=l[k][b];return`<div class="row"><span>${B[b][0]}</span><span class="dc on" style="--k:${D[dd][1]};cursor:default">${D[dd][0]}</span><span>${p}인</span><span class="pr">${K(Math.floor(bp(b,dd)/p))}</span></div>`}).join('')});
+h+=`<p style="text-align:right"><b>하루 합계 <span class="big">${K(all)}</span></b></p><div class="acts"><button class="p" data-a="edit">수정</button><button data-a="close">닫기</button></div>`}
+else{
+const dr=pop.dr,cid=pop.cid,c=cn(cid),e=dr[cid]||{},wn=wkn(cid,ds,dr),wl=wld(cid,ds,dr);
+h+=`<div class="mut" style="margin-bottom:4px">캐릭터 선택</div><div>`+S.chars.map(x=>`<button class="cb${x.id==cid?' on':''}" data-a="pc" data-v="${x.id}">${esc(x.name)} (${Object.keys(dr[x.id]||{}).length})</button>`).join('')+`</div>
+<div class="qk"><b>⚡ 빠른 입력</b> <button class="r" data-a="q" data-v="clr">이 캐릭터 선택 해제</button><br><button data-a="q" data-v="rem">이 캐릭터 남은 주보 전체 체크</button><button data-a="q" data-v="one">이 캐릭터 주보 전체 체크</button><button data-a="q" data-v="all">모든 캐릭터 주보 전체 체크</button></div>
+<p>이번 주(목~수) · 캐릭터 주간 보스 <span class="${wn>=12?'bad':''}">${wn}/12</span> · 계정 월드 결정(검마 포함) <span class="${wl>=90?'bad':''}">${wl}/90</span></p>`;
+let tot=0;
+B.forEach((b,bi)=>{const s=e[bi],a=s?Math.floor(bp(bi,s[0])/s[1]):0;tot+=a;
+h+=`<div class="row"><span>${b[0]}${bi==WK?'<small>월간</small>':''}</span><span style="flex:1">`+b.slice(1).map(x=>`<span class="dc${s&&s[0]==x[0]?' on':''}" style="--k:${D[x[0]][1]}" data-a="dc" data-b="${bi}" data-d="${x[0]}">${D[x[0]][0]}</span>`).join('')+`</span>${s?`<select data-a="dp" data-b="${bi}">${[...Array(maxp(bi,s[0]))].map((_,j)=>`<option value="${j+1}"${s[1]==j+1?' selected':''}>${j+1}인</option>`).join('')}</select>`:'<span style="width:46px"></span>'}<span class="pr">${a?K(a):''}</span></div>`});
+let all=0;for(const k in dr)for(const b in dr[k])all+=Math.floor(bp(b,dr[k][b][0])/dr[k][b][1]);
+h+=`<p style="text-align:right"><b>하루 합계 <span class="big">${K(all)}</span></b></p><div class="acts"><button class="p" data-a="ok">확인</button><button data-a="cancel">취소</button></div>`}
+return h+'</div>'}
+
+/* ---------- 렌더·이벤트 ---------- */
+function render(){ids();const a=document.activeElement,k=a&&a.dataset&&a.dataset.k,ss=a&&a.selectionStart;
+const w=document.querySelector('#app .wrap'),dg=document.querySelector('#ov .dlg'),sx=w?w.scrollLeft:0,sy=w?w.scrollTop:0,dy=dg?dg.scrollTop:0,wy=window.scrollY,wx=window.scrollX;
+$('#app').innerHTML=nav()+(tab=='a'?main():daily());
+$('#ov').innerHTML=pop?popup():'';$('#ov').className=pop?'ov on':'ov';
+const w2=document.querySelector('#app .wrap');if(w2&&tab=='a'){w2.scrollLeft=sx;w2.scrollTop=sy}
+const d2=document.querySelector('#ov .dlg');if(d2)d2.scrollTop=dy;
+window.scrollTo(wx,wy);
+if(k){const e=document.querySelector('[data-k="'+k+'"]');if(e){e.focus();try{e.setSelectionRange(ss,ss)}catch(x){}}}}
+function dl(){const t=new Date(),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='주보_'+t.getFullYear()+p2(t.getMonth()+1)+p2(t.getDate())+'.json';a.click()}
+document.addEventListener('click',e=>{
+if(e.target.id=='ov'){pop=null;render();return}
+if(menu&&!e.target.closest('.menu,[data-a=add]')){menu=false;render()}
+const t=e.target.closest('[data-a]');if(!t)return;
+const a=t.dataset.a,i=+t.dataset.i,b=+t.dataset.b,d=t.dataset.d,v=t.dataset.v,c=S.chars[i];
+if(a=='tab'){tab=v}
+else if(a=='save'){dl();return}
+else if(a=='load'){$('#file').click();return}
+else if(a=='add'){menu=!menu}
+else if(a=='addnew'){S.chars.push(newChar(S.chars.length+1,S.chars[S.chars.length-1].acc));menu=false}
+else if(a=='addcp'){const n=JSON.parse(JSON.stringify(c));n.id=rid();n.name+=' 복사';S.chars.push(n);menu=false}
+else if(a=='cp'){const n=JSON.parse(JSON.stringify(c));n.id=rid();n.name+=' 복사';S.chars.splice(i+1,0,n)}
+else if(a=='mv'){const j=i+ +v;if(j<0||j>=S.chars.length)return;[S.chars[i],S.chars[j]]=[S.chars[j],S.chars[i]]}
+else if(a=='del'){if(S.chars.length<2)return;if(delC==i){S.chars.splice(i,1);delC=null}else{delC=i;render();return}}
+else if(a=='chip'){if(c.sel[b]==d){delete c.sel[b];delete c.party[b]}else{if(b<WK&&!c.sel[b]&&cnt(c)>=12)return;c.sel[b]=d;c.party[b]=Math.min(c.party[b]||1,maxp(b,d))}}
+else if(a=='yr'){S.year+=+v}
+else if(a=='cm'){cal.m+=+v;if(cal.m<1){cal.m=12;cal.y--}if(cal.m>12){cal.m=1;cal.y++}render();return}
+else if(a=='day'){pop={date:v,edit:false}}
+else if(a=='close'||a=='cancel'){pop=null}
+else if(a=='edit'){pop.edit=true;pop.dr=JSON.parse(JSON.stringify(S.log[pop.date]||{}));pop.cid=S.chars[0].id}
+else if(a=='pc'){pop.cid=v}
+else if(a=='dc'){const dr=pop.dr,cid=pop.cid,e=dr[cid]=dr[cid]||{};
+if(e[b]&&e[b][0]==d)delete e[b];
+else if(e[b])e[b]=[d,Math.min(e[b][1],maxp(b,d))];
+else{const r=canAdd(cid,b,pop.date,dr);if(r){alert(cn(cid).name+': '+B[b][0]+' 선택 불가 — '+r+'.');return}e[b]=[d,Math.min(cn(cid).party[b]||1,maxp(b,d))]}
+render();return}
+else if(a=='q'){let f=[];
+if(v=='clr')pop.dr[pop.cid]={};
+else if(v=='all')S.chars.filter(x=>x.inc!==false).forEach(x=>f.push(...fill(x.id,true)));
+else f=fill(pop.cid,v=='one');
+render();if(f.length)alert('다음 보스는 넣지 못했습니다:\n'+f.join('\n'));return}
+else if(a=='ok'){const o={};for(const k in pop.dr)if(Object.keys(pop.dr[k]).length)o[k]=pop.dr[k];
+if(Object.keys(o).length)S.log[pop.date]=o;else delete S.log[pop.date];save();pop.edit=false;pop.dr=null;render();return}
+else return;
+save();render()});
+document.addEventListener('change',e=>{const t=e.target,a=t.dataset.a;if(!a)return;
+const i=+t.dataset.i,b=+t.dataset.b;
+if(a=='inc')S.chars[i].inc=t.checked;else if(a=='exp')S.exp=t.checked;
+else if(a=='pty')S.chars[i].party[b]=+t.value;
+else if(a=='nm')S.chars[i].name=t.value||'캐릭터'+(i+1);
+else if(a=='acc')S.chars[i].acc=t.value.trim()||'계정1';
+else if(a=='dp')pop.dr[pop.cid][b][1]=+t.value;
+else if(a=='file'){const f=t.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const s=JSON.parse(r.result);if(!s||!Array.isArray(s.chars)||!s.chars.length)throw 0;S=s;pop=null;save();render()}catch(x){alert('파일 형식이 올바르지 않습니다.')}t.value=''};r.readAsText(f);return}
+else return;
+save();render()});
+document.addEventListener('input',e=>{const t=e.target,a=t.dataset.a;
+if(a=='rate'){S.rate=Math.max(0,+t.value||0);save();render()}
+else if(a=='nm'){S.chars[+t.dataset.i].name=t.value;save()}});
+document.addEventListener('keydown',e=>{if(e.key=='Escape'&&(pop||menu)){pop=null;menu=false;render()}});
+$('#file').dataset.a='file';
 render();
-</script>
-</body>
-</html>
+</script></body></html>
