@@ -62,6 +62,14 @@ section{margin:22px 12px}
 .bar{height:5px;background:var(--gold);border-radius:3px;margin-top:3px}
 .cl{max-width:560px}.cl div{display:flex;gap:12px;padding:4px 0;border-bottom:1px solid var(--line)}.cl span:first-child{flex:1}
 .ac2{background:var(--alt);border-radius:99px;padding:0 8px;margin-left:8px}
+
+.fm{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:0 12px}
+.fr{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:10px}
+.fr label{display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px}
+.fr input,.fr select{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:14px;max-width:100%}
+.fr .w3{width:90px}.fr .w1{width:230px}.fr .w2{width:180px}
+.fm .dc{padding:3px 14px;font-size:13px;margin-bottom:2px}
+.fm .btn{margin:0;border-color:var(--gold);font-weight:700}
 .nb{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 20px 14px 38px;margin:0;max-width:none;color:var(--fg)}.nb li{margin:4px 0}
 .note{color:var(--mut);font-size:12.5px;max-width:900px}.note p{margin:4px 0}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
@@ -71,7 +79,7 @@ section{margin:22px 12px}
 .cal .d{cursor:pointer}.cal .d:hover{background:var(--alt)}
 .cal .th{background:color-mix(in srgb,var(--gold) 8%,var(--panel))}
 .cal .td{outline:2px solid var(--gold);outline-offset:-2px}
-.cal .am{position:absolute;right:6px;bottom:4px;font-size:12px;color:var(--gold);font-weight:500}
+.cal .am{text-align:right;line-height:1.25;position:absolute;right:6px;bottom:4px;font-size:12px;color:var(--gold);font-weight:500}
 .ov{position:fixed;inset:0;background:#0007;display:none;align-items:center;justify-content:center;padding:12px;z-index:100}
 .ov.on{display:flex}
 .dlg{width:min(760px,100%);max-height:88vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
@@ -101,10 +109,18 @@ const bp=(b,d)=>{const e=B[b].slice(1).find(x=>x[0]==d);return e?e[1]:0};
 const rid=()=>Math.random().toString(36).slice(2,10);
 const newChar=(n,acc)=>({id:rid(),name:'캐릭터'+n,sel:{},party:{},acc:acc||'계정1',inc:true});
 function load(){try{const s=JSON.parse(localStorage.getItem('jubo-v1'));if(s&&Array.isArray(s.chars)&&s.chars.length)return s}catch(e){}return{chars:[newChar(1)],year:new Date().getFullYear(),rate:0,log:{}}}
-let S=load(),tab='a',menu=false,delC=null,pop=null;
+let S=load(),tab='a',menu=false,delC=null,delS=null,pop=null;
+const ST={b:['보스 드랍','#e0407f'],h:['사냥 드랍','#2aa7c0'],e:['기타','#c9a36b']};
+const tdy=()=>{const t=new Date();return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')};
+const SP={e:['강화','#c9a36b'],i:['아이템 구입','#2aa7c0'],c:['소모품','#8c8c8c'],o:['기타','#b3303f']};
+let spf={t:'e',d:tdy(),nm:'',amt:''},spm={y:new Date().getFullYear(),m:new Date().getMonth()+1},delP=null;
+const sg=n=>n<0?'-'+K(-n):K(n);
+let rateRaw=null;const rateShown=()=>rateRaw!=null&&(+rateRaw||0)==S.rate?rateRaw:(S.rate||'');
+const HI=['솔 에르다 조각','코어 젬스톤','메소','기타'];
+let sf={h:HI.map(()=>({q:'',pr:'',nm:''})),t:'b',d:tdy(),nm:'',pr:'',n:1},sm={y:new Date().getFullYear(),m:new Date().getMonth()+1};
 const T0=new Date();let cal={y:T0.getFullYear(),m:T0.getMonth()+1};
 function save(){try{localStorage.setItem('jubo-v1',JSON.stringify(S))}catch(e){}}
-function ids(){const seen=new Set();S.chars.forEach(c=>{if(!c.id||seen.has(c.id))c.id=rid();seen.add(c.id);c.sel=c.sel||{};c.party=c.party||{};c.acc=c.acc||'계정1'});S.log=S.log||{};S.rate=S.rate||0;S.year=S.year||T0.getFullYear()}
+function ids(){const seen=new Set();S.chars.forEach(c=>{if(!c.id||seen.has(c.id))c.id=rid();seen.add(c.id);c.sel=c.sel||{};c.party=c.party||{};c.acc=c.acc||'계정1'});S.log=S.log||{};S.sales=S.sales||[];S.spend=S.spend||[];S.fee=S.fee||0;S.rate=S.rate||0;S.year=S.year||T0.getFullYear()}
 function kr(n){n=Math.floor(n);if(!n)return'-';if(n<1e4)return''+n;const o=[];for(const[v,s]of[[1e12,'조'],[1e8,'억'],[1e4,'만']]){const q=Math.floor(n/v);n%=v;if(q)o.push(q.toLocaleString()+s)}return o.join(' ')}
 const K=n=>`<span title="${Math.floor(n).toLocaleString()}">${kr(n)}</span>`;
 const mp=x=>S.rate>0?`<small class="ok" style="display:block;margin:0">${Math.round(x/1e8*S.rate).toLocaleString()} 메포</small>`:'';
@@ -122,11 +138,11 @@ function wkOf(ds){const[y,m,d]=ds.split('-').map(Number),t=new Date(y,m-1,d);t.s
 const md=ds=>{const[,m,d]=ds.split('-');return(+m)+'월 '+(+d)+'일'};
 
 /* ---------- 주보수익 ---------- */
-function nav(){return`<nav class="tabs"><button class="tab${tab=='a'?' on':''}" data-a="tab" data-v="a">주보수익</button><button class="tab${tab=='d'?' on':''}" data-a="tab" data-v="d">일일수익</button><span class="sp"></span><button class="btn" data-a="save">파일로 저장</button><button class="btn" data-a="load">파일에서 불러오기</button></nav>`}
+function nav(){return`<nav class="tabs"><button class="tab${tab=='a'?' on':''}" data-a="tab" data-v="a">주보수익</button><button class="tab${tab=='s'?' on':''}" data-a="tab" data-v="s">판매수익</button><button class="tab${tab=='p'?' on':''}" data-a="tab" data-v="p">소비</button><button class="tab${tab=='d'?' on':''}" data-a="tab" data-v="d">일일수익</button><span class="sp"></span><button class="btn" data-a="save">파일로 저장</button><button class="btn" data-a="load">파일에서 불러오기</button></nav>`}
 function main(){
 const g=groups(),gs=Object.values(g),W=gs.reduce((x,o)=>x+o.w,0),Mo=gs.reduce((x,o)=>x+o.m,0),ms=[...Array(12)].map((_,i)=>thu(S.year,i+1)),N=ms.reduce((x,a)=>x+a.length,0),Y=W*N+Mo*12,inc=S.chars.filter(c=>c.inc!==false);
 let h=`<header><h1>주보 수익</h1><div class="sm"><div class="big">${K(W)}<small>주간 보스 합계 (${inc.length}캐릭터, 1주)</small>${mp(W)}</div><div class="big">${K(Mo)}<small>월간 보스 합계 (월 1회)</small>${mp(Mo)}</div><div class="mid">${K(W+Mo)}<small>주간 + 월간 합</small></div><div class="mid">${K(Y)}<small>${S.year}년 연간 총합</small>${mp(Y)}</div></div>
-<label class="rt">1억 메소 = <input type="number" min="0" data-k="rate" data-a="rate" value="${S.rate||''}"> 메포</label>
+<label class="rt">1억 메소 = <input type="text" inputmode="decimal" data-k="rate" data-a="rate" value="${esc(rateShown())}"> 메포</label>
 <div class="rel"><button class="btn add" data-a="add">+ 캐릭터 추가</button>${menu?`<div class="menu"><button class="ok" data-a="addnew">+ 빈 캐릭터로 추가</button><hr><div class="mt">기존 캐릭터를 복사해서 추가</div>${S.chars.map((c,i)=>`<button data-a="addcp" data-i="${i}">${esc(c.name)} · ${esc(c.acc)}</button>`).join('')}</div>`:''}</div></header>`;
 const accs=[...new Set(S.chars.map(c=>c.acc))];
 h+=`<datalist id="accs">${accs.map(a=>`<option value="${esc(a)}">`).join('')}</datalist><div class="tgb"><label><input type="checkbox" data-a="exp" ${S.exp?'checked':''}> 보스 전체 펼쳐서 보기 <small>(끄면 표 안에서 스크롤)</small></label></div><div class="wrap${S.exp?' full':''}"><table class="main"><thead><tr><th class="l"></th>`+S.chars.map((c,i)=>`<th class="c${i%2}${c.inc===false?' off':''}"><div class="hr"><input type="checkbox" data-a="inc" data-i="${i}" ${c.inc!==false?'checked':''} title="수익 포함"><input class="nm" data-k="n${i}" data-a="nm" data-i="${i}" value="${esc(c.name)}"><button data-a="mv" data-i="${i}" data-v="-1" ${i==0?'disabled':''}>◀</button><button data-a="mv" data-i="${i}" data-v="1" ${i==S.chars.length-1?'disabled':''}>▶</button><button data-a="cp" data-i="${i}">복사</button><button data-a="del" data-i="${i}" class="${delC==i?'bad':''}" ${S.chars.length<2?'disabled':''}>${delC==i?'삭제?':'×'}</button></div><input class="ac" list="accs" data-k="a${i}" data-a="acc" data-i="${i}" value="${esc(c.acc)}" placeholder="계정"></th>`).join('')+'</tr></thead><tbody>';
@@ -141,14 +157,52 @@ h+=`<section><h2 style="margin-bottom:6px">계정별 합계</h2><div class="wrap
 h+=`<section><ul class="nb"><li>보스 난이도 뱃지를 클릭해 선택하고, 이미 선택된 뱃지를 다시 클릭하면 해제됩니다.</li><li>캐릭터당 주간 보스는 최대 12마리까지 선택할 수 있으며(검은 마법사 제외), 같은 계정(월드) 내 주간 결정석은 높은 가격순 상위 90개까지만 주간·연간 합계에 반영됩니다.</li><li>월별 계산은 해당 월의 목요일(주간 보스 초기화일) 횟수 × 주간 보스 수익에 월간 보스(월 1회)를 더해 산출합니다.</li><li>모든 변경 사항은 브라우저(localStorage)에 자동 저장되며, 상단 버튼으로 JSON 파일 백업 및 복원이 가능합니다.</li></ul></section>`;
 return h}
 
+/* ---------- 판매수익 ---------- */
+const nmq=x=>esc(x.nm||'-')+(x.q>1?' ×'+x.q:'');
+const net=x=>Math.floor((x.pr||0)*(x.q||1)*(1-(S.fee||0)/100)/(x.t=='b'?(x.n||1):1));
+const salesOf=ds=>S.sales.filter(x=>x.d==ds),salesTot=ds=>salesOf(ds).reduce((s,x)=>s+net(x),0);
+function pm(str){str=String(str).replace(/[,\s]/g,'');let t=0;str.replace(/(\d+(?:\.\d+)?)(조|억|만)?/g,(m,n,u)=>{t+=+n*(u?{조:1e12,억:1e8,만:1e4}[u]:1)});return Math.round(t)}
+function prevH(){if(sf.t=='h'){let t=0;sf.h.forEach((r,i)=>{const pr=pm(r.pr);if(pr)t+=net({pr,q:hq(i),t:'h'})});return t?`합계 <b class="ok">내 몫 ${K(t)}</b>${S.fee?` · 수수료 ${S.fee}% 적용`:''}`:'가격은 숫자 또는 <b>1억</b>, <b>3500만</b>처럼 입력할 수 있습니다. 가격을 입력한 줄만 추가됩니다.'}const pr=pm(sf.pr);if(!pr)return'가격은 숫자 또는 <b>25억</b>, <b>1억 5000만</b>처럼 입력할 수 있습니다.';const n=sf.t=='b'?sf.n:1;return`입력 ${K(pr)}${S.fee?` · 수수료 ${S.fee}% 적용`:''}${n>1?` · ${n}인 분배`:''} → <b class="ok">내 몫 ${K(net({pr,t:sf.t,n}))}</b>`}
+const hq=i=>i==2?1:Math.max(1,parseInt(sf.h[i].q)||1);
+const hs=i=>{const pr=pm(sf.h[i].pr);return pr?'= '+K(net({pr,q:hq(i),t:'h'})):''};
+function huntRow(x,i){const r=sf.h[i];return`<div class="fr" style="margin-top:6px"><b style="min-width:112px;padding-bottom:7px">${x}</b>${i==3?`<label>설명<input class="w1" data-a="hn" data-r="3" value="${esc(r.nm)}" placeholder="기타 아이템 설명"></label>`:''}${i!=2?`<label>개수<input class="w3" inputmode="numeric" data-a="hq" data-r="${i}" value="${esc(r.q)}" placeholder="1"></label>`:''}<label>${i==2?'획득 메소':'개당 가격'}<input class="w2" data-a="hp" data-r="${i}" value="${esc(r.pr)}" placeholder="예: 1억"></label><span class="mut" id="hs${i}" style="padding-bottom:7px">${hs(i)}</span></div>`}
+function formH(){const date=`<label>판매일<input type="date" data-a="sd" value="${sf.d}"></label>`;
+if(sf.t=='h')return`<div class="fr">${date}</div><div style="margin-top:4px">${HI.map(huntRow).join('')}</div><div class="fr"><button class="btn" data-a="sadd">+ 추가</button></div>`;
+return`<div class="fr">${date}<label>아이템 / 설명<input class="w1" data-a="snm" value="${esc(sf.nm)}" placeholder="${sf.t=='e'?'예: 메소 거래, 이벤트 판매':'아이템 이름'}"></label><label>판매 가격(메소)<input class="w2" data-a="spr" value="${esc(sf.pr)}" placeholder="예: 25억"></label>${sf.t=='b'?`<label>분배 인원<select data-a="sn">${[1,2,3,4,5,6].map(j=>`<option value="${j}"${sf.n==j?' selected':''}>${j}인</option>`).join('')}</select></label>`:''}<button class="btn" data-a="sadd">+ 추가</button></div>`}
+function addSale(){if(!sf.d){alert('날짜를 선택해 주세요.');return}
+const L=[];
+if(sf.t=='h')sf.h.forEach((r,i)=>{const pr=pm(r.pr);if(pr)L.push({nm:i==3?(r.nm.trim()?'기타 - '+r.nm.trim():'기타'):HI[i],pr,q:hq(i),n:1})});
+else{const pr=pm(sf.pr);if(pr)L.push({nm:sf.nm.trim(),pr,q:1,n:sf.t=='b'?sf.n:1})}
+if(!L.length){alert('가격을 입력해 주세요. 예: 25억, 1억 5000만');return}
+L.forEach(x=>S.sales.push({id:rid(),d:sf.d,t:sf.t,...x}));
+const[y,m]=sf.d.split('-');sm={y:+y,m:+m};sf.nm='';sf.pr='';sf.h=HI.map(()=>({q:'',pr:'',nm:''}));save();render()}
+function sales(){
+const pre=sm.y+'-'+p2(sm.m),L=S.sales.filter(x=>x.d.slice(0,7)==pre).sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:0),sum={b:0,h:0,e:0};L.forEach(x=>sum[x.t]+=net(x));
+return`<header><h1>판매 수익</h1><div class="sm"><div class="big">${K(sum.b+sum.h+sum.e)}<small>${sm.y}년 ${sm.m}월 판매 합계</small></div>`+['b','h','e'].map(k=>`<div class="mid">${K(sum[k])}<small>${ST[k][0]}</small></div>`).join('')+`</div><label class="rt">판매 수수료 <input type="number" min="0" max="100" step="0.1" data-k="fee" data-a="fee" value="${S.fee||''}"> %</label></header>
+<section style="margin-top:0"><div class="fm"><b>판매 내역 추가</b><div style="margin-top:8px">`+Object.keys(ST).map(k=>`<span class="dc${sf.t==k?' on':''}" style="--k:${ST[k][1]}" data-a="st" data-v="${k}">${ST[k][0]}</span>`).join('')+`</div>${formH()}<div id="prev" class="mut" style="margin-top:8px">${prevH()}</div></div></section>
+<section><div class="yn"><h2>판매 내역</h2><button data-a="sm" data-v="-1">◀</button><b>${sm.y}년 ${sm.m}월</b><button data-a="sm" data-v="1">▶</button></div><div class="wrap" style="margin:0;max-width:900px"><table class="tb"><thead><tr><th>날짜</th><th>구분</th><th style="text-align:left">아이템</th><th>판매 가격</th><th>분배</th><th>내 몫</th><th></th></tr></thead><tbody>`+(L.length?L.map(x=>`<tr><td>${md(x.d)}</td><td><span class="dc on" style="--k:${ST[x.t][1]};cursor:default;margin:0">${ST[x.t][0]}</span></td><td style="text-align:left">${nmq(x)}</td><td>${K(x.pr*(x.q||1))}</td><td>${x.t=='b'?x.n+'인':'-'}</td><td><b>${K(net(x))}</b></td><td><button class="${delS==x.id?'bad':''}" data-a="sdel" data-id="${x.id}" style="border:1px solid var(--line);background:var(--panel);border-radius:4px">${delS==x.id?'삭제?':'×'}</button></td></tr>`).join(''):'<tr><td colspan="7" class="mut" style="text-align:center">이 달의 판매 내역이 없습니다.</td></tr>')+`</tbody></table></div></section>
+<section><ul class="nb"><li>보스 드랍은 판매 가격을 분배 인원 수로 나눈 값(내림)이 내 몫으로 계산됩니다.</li><li>사냥 드랍은 네 줄(솔 에르다 조각·코어 젬스톤·메소·기타)을 한 번에 입력하고, 가격을 입력한 줄만 저장됩니다. 메소를 뺀 줄은 개수 × 개당 가격이며, 메소는 획득량 그대로입니다. 기타(이벤트, 메소 거래 등)는 입력한 가격이 그대로 내 몫입니다.</li><li>판매 수수료(%)를 입력하면 모든 내역의 내 몫에서 수수료가 먼저 빠집니다. 수수료를 바꾸면 이전 내역도 함께 다시 계산됩니다.</li><li>판매일 기준으로 일일수익 탭의 해당 날짜에 보스 수익 아래로 합산되어 표시됩니다.</li></ul></section>`}
+
+/* ---------- 소비 ---------- */
+const spendOf=ds=>S.spend.filter(x=>x.d==ds),spendTot=ds=>spendOf(ds).reduce((s,x)=>s+x.amt,0);
+const pprevH=()=>{const a=pm(spf.amt);return a?`지출 <b class="bad">-${K(a)}</b>`:'금액은 숫자 또는 <b>5억</b>, <b>1억 2000만</b>처럼 입력할 수 있습니다.'};
+function addSpend(){const amt=pm(spf.amt);if(!amt){alert('금액을 입력해 주세요. 예: 5억, 1억 2000만');return}if(!spf.d){alert('날짜를 선택해 주세요.');return}
+S.spend.push({id:rid(),d:spf.d,t:spf.t,nm:spf.nm.trim(),amt});const[y,m]=spf.d.split('-');spm={y:+y,m:+m};spf.nm='';spf.amt='';save();render()}
+function spendTab(){
+const pre=spm.y+'-'+p2(spm.m),L=S.spend.filter(x=>x.d.slice(0,7)==pre).sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:0),sum={e:0,i:0,c:0,o:0};L.forEach(x=>sum[x.t]+=x.amt);const tot=L.reduce((a,x)=>a+x.amt,0);
+return`<header><h1>소비</h1><div class="sm"><div class="big bad">-${K(tot)}<small>${spm.y}년 ${spm.m}월 소비 합계</small></div>`+Object.keys(SP).map(k=>`<div class="mid">${sum[k]?'-':''}${K(sum[k])}<small>${SP[k][0]}</small></div>`).join('')+`</div></header>
+<section style="margin-top:0"><div class="fm"><b>소비 내역 추가</b><div style="margin-top:8px">`+Object.keys(SP).map(k=>`<span class="dc${spf.t==k?' on':''}" style="--k:${SP[k][1]}" data-a="ptp" data-v="${k}">${SP[k][0]}</span>`).join('')+`</div><div class="fr"><label>사용일<input type="date" data-a="pdt" value="${spf.d}"></label><label>내용<input class="w1" data-a="pnm" value="${esc(spf.nm)}" placeholder="${spf.t=='e'?'예: 스타포스, 큐브, 주문서':spf.t=='i'?'예: 경매장에서 구입한 장비':spf.t=='c'?'예: 물약, 소재':'기타 사용 내역'}"></label><label>사용 메소<input class="w2" data-a="pamt" value="${esc(spf.amt)}" placeholder="예: 5억"></label><button class="btn" data-a="padd">+ 추가</button></div><div id="pprev" class="mut" style="margin-top:8px">${pprevH()}</div></div></section>
+<section><div class="yn"><h2>소비 내역</h2><button data-a="pmv" data-v="-1">◀</button><b>${spm.y}년 ${spm.m}월</b><button data-a="pmv" data-v="1">▶</button></div><div class="wrap" style="margin:0;max-width:900px"><table class="tb"><thead><tr><th>날짜</th><th>구분</th><th style="text-align:left">내용</th><th>사용 메소</th><th></th></tr></thead><tbody>`+(L.length?L.map(x=>`<tr><td>${md(x.d)}</td><td><span class="dc on" style="--k:${SP[x.t][1]};cursor:default;margin:0">${SP[x.t][0]}</span></td><td style="text-align:left">${esc(x.nm||'-')}</td><td class="bad"><b>-${K(x.amt)}</b></td><td><button class="${delP==x.id?'bad':''}" data-a="pdel" data-id="${x.id}" style="border:1px solid var(--line);background:var(--panel);border-radius:4px">${delP==x.id?'삭제?':'×'}</button></td></tr>`).join(''):'<tr><td colspan="5" class="mut" style="text-align:center">이 달의 소비 내역이 없습니다.</td></tr>')+`</tbody></table></div></section>
+<section><ul class="nb"><li>강화(스타포스·큐브·주문서 등), 아이템 구입, 소모품, 기타로 나누어 사용한 메소를 기록합니다.</li><li>일일수익 탭에서는 사용일 칸에 빨간 -금액으로 표시되고, 하루·월 합계에서 수입(보스·판매)에서 차감됩니다.</li></ul></section>`}
+
 /* ---------- 일일수익 ---------- */
 function dayTot(ds){let t=0;const l=S.log[ds]||{};for(const c in l)for(const b in l[c])t+=Math.floor(bp(b,l[c][b][0])/l[c][b][1]);return t}
 function daily(){
-const{y,m}=cal,first=new Date(y,m-1,1).getDay(),n=new Date(y,m,0).getDate(),today=fd(T0.getFullYear(),T0.getMonth()+1,T0.getDate());let tot=0,cells='';
+const{y,m}=cal,first=new Date(y,m-1,1).getDay(),n=new Date(y,m,0).getDate(),today=fd(T0.getFullYear(),T0.getMonth()+1,T0.getDate());let tot=0,stot=0,cells='';
 ['일','월','화','수','목','금','토'].forEach((w,i)=>cells+=`<div class="h${i==0?' su':i==6?' sa':''}">${w}</div>`);
 for(let i=0;i<first;i++)cells+='<div></div>';
-for(let d=1;d<=n;d++){const ds=fd(y,m,d),t=dayTot(ds);tot+=t;cells+=`<div class="d${new Date(y,m-1,d).getDay()==4?' th':''}${ds==today?' td':''}" data-a="day" data-v="${ds}">${d}<span class="am">${t?K(t):''}</span></div>`}
-return`<header><h1>일일수익</h1><div class="yn" style="margin:0"><button data-a="cm" data-v="-1">◀</button><b>${y}년 ${m}월</b><button data-a="cm" data-v="1">▶</button></div><div class="big">${K(tot)}<small>이번 달 합계</small></div></header><section style="margin-top:0"><div class="cal">${cells}</div><ul class="nb"><li>달력의 날짜를 클릭하면 그날 처치한 보스 기록을 확인하거나 수정할 수 있습니다.</li><li>빠른 입력 기능으로 주보수익 탭에 설정해 둔 캐릭터별 주간 보스 구성을 한 번에 불러올 수 있습니다.</li><li>주간 초기화 기준(목~수) 캐릭터당 주간 보스 12마리, 같은 계정(월드) 주간 결정석 90개(검마 포함) 및 중복 처치 제한이 자동으로 검사됩니다.</li></ul></section>`}
+for(let d=1;d<=n;d++){const ds=fd(y,m,d),t=dayTot(ds)+salesTot(ds),sp=spendTot(ds);tot+=t;stot+=sp;cells+=`<div class="d${new Date(y,m-1,d).getDay()==4?' th':''}${ds==today?' td':''}" data-a="day" data-v="${ds}">${d}<span class="am">${t?K(t):''}${sp?`${t?'<br>':''}<span class="bad">-${K(sp)}</span>`:''}</span></div>`}
+return`<header><h1>일일수익</h1><div class="yn" style="margin:0"><button data-a="cm" data-v="-1">◀</button><b>${y}년 ${m}월</b><button data-a="cm" data-v="1">▶</button></div><div class="sm"><div class="mid">${K(tot)}<small>이번 달 수입</small></div><div class="mid bad">${stot?'-':''}${K(stot)}<small>이번 달 소비</small></div><div class="big">${sg(tot-stot)}<small>이번 달 합계</small></div></div></header><section style="margin-top:0"><div class="cal">${cells}</div><ul class="nb"><li>달력의 날짜를 클릭하면 그날 처치한 보스 기록을 확인하거나 수정할 수 있습니다.</li><li>빠른 입력 기능으로 주보수익 탭에 설정해 둔 캐릭터별 주간 보스 구성을 한 번에 불러올 수 있습니다.</li><li>주간 초기화 기준(목~수) 캐릭터당 주간 보스 12마리, 같은 계정(월드) 주간 결정석 90개(검마 포함) 및 중복 처치 제한이 자동으로 검사됩니다.</li></ul></section>`}
 function others(date,f){const w=wkOf(date);for(const d in S.log)if(d!=date&&wkOf(d)==w)f(d,S.log[d])}
 function wkn(cid,date,dr){let n=0;others(date,(d,l)=>{const e=l[cid];if(e)for(const k in e)if(k<WK)n++});for(const k in dr[cid]||{})if(k<WK)n++;return n}
 function wld(cid,date,dr){const a=cn(cid).acc;let n=0;for(const x of S.chars)if(x.acc==a){others(date,(d,l)=>{if(l[x.id])n+=Object.keys(l[x.id]).length});n+=Object.keys(dr[x.id]||{}).length}return n}
@@ -170,7 +224,11 @@ const l=S.log[ds]||{},ks=Object.keys(l).filter(k=>Object.keys(l[k]).length);let 
 if(!ks.length)h+='<p class="mut">기록된 보스가 없습니다.</p>';
 ks.forEach(k=>{const c=cn(k),es=Object.keys(l[k]).sort((a,b)=>a-b),sub=es.reduce((s,b)=>s+Math.floor(bp(b,l[k][b][0])/l[k][b][1]),0);all+=sub;
 h+=`<div style="margin-top:8px"><b>${c?esc(c.name):'(삭제된 캐릭터)'}</b> <small>소계 ${K(sub)}</small></div>`+es.map(b=>{const[dd,p]=l[k][b];return`<div class="row"><span>${B[b][0]}</span><span class="dc on" style="--k:${D[dd][1]};cursor:default">${D[dd][0]}</span><span>${p}인</span><span class="pr">${K(Math.floor(bp(b,dd)/p))}</span></div>`}).join('')});
-h+=`<p style="text-align:right"><b>하루 합계 <span class="big">${K(all)}</span></b></p><div class="acts"><button class="p" data-a="edit">수정</button><button data-a="close">닫기</button></div>`}
+const sl=salesOf(ds),st=salesTot(ds),sp=spendOf(ds),spt=spendTot(ds);
+if(sl.length)h+=`<div style="margin-top:14px"><b>판매 수익</b> <small>소계 ${K(st)}</small></div>`+sl.map(x=>`<div class="row"><span><span class="dc on" style="--k:${ST[x.t][1]};cursor:default;margin:0">${ST[x.t][0]}</span></span><span style="flex:1">${nmq(x)}</span>${x.t=='b'?`<span>${x.n}인 분배</span>`:''}<span class="pr">${K(net(x))}</span></div>`).join('');
+if(sp.length)h+=`<div style="margin-top:14px"><b>소비</b> <small class="bad">소계 -${K(spt)}</small></div>`+sp.map(x=>`<div class="row"><span><span class="dc on" style="--k:${SP[x.t][1]};cursor:default;margin:0">${SP[x.t][0]}</span></span><span style="flex:1">${esc(x.nm||'-')}</span><span class="pr bad">-${K(x.amt)}</span></div>`).join('');
+const ex=sl.length||sp.length;
+h+=`<p style="text-align:right">${ex?`<small>보스 ${K(all)}${sl.length?' + 판매 '+K(st):''}${sp.length?' − 소비 '+K(spt):''}</small><br>`:''}<b>하루 ${ex?'총합':'합계'} <span class="big">${sg(all+st-spt)}</span></b></p><div class="acts"><button class="p" data-a="edit">수정</button><button data-a="close">닫기</button></div>`}
 else{
 const dr=pop.dr,cid=pop.cid,c=cn(cid),e=dr[cid]||{},wn=wkn(cid,ds,dr),wl=wld(cid,ds,dr);
 h+=`<div class="mut" style="margin-bottom:4px">캐릭터 선택</div><div>`+S.chars.map(x=>`<button class="cb${x.id==cid?' on':''}" data-a="pc" data-v="${x.id}">${esc(x.name)} (${Object.keys(dr[x.id]||{}).length})</button>`).join('')+`</div>
@@ -180,13 +238,13 @@ let tot=0;
 B.forEach((b,bi)=>{const s=e[bi],a=s?Math.floor(bp(bi,s[0])/s[1]):0;tot+=a;
 h+=`<div class="row"><span>${b[0]}${bi==WK?'<small>월간</small>':''}</span><span style="flex:1">`+b.slice(1).map(x=>`<span class="dc${s&&s[0]==x[0]?' on':''}" style="--k:${D[x[0]][1]}" data-a="dc" data-b="${bi}" data-d="${x[0]}">${D[x[0]][0]}</span>`).join('')+`</span>${s?`<select data-a="dp" data-b="${bi}">${[...Array(maxp(bi,s[0]))].map((_,j)=>`<option value="${j+1}"${s[1]==j+1?' selected':''}>${j+1}인</option>`).join('')}</select>`:'<span style="width:46px"></span>'}<span class="pr">${a?K(a):''}</span></div>`});
 let all=0;for(const k in dr)for(const b in dr[k])all+=Math.floor(bp(b,dr[k][b][0])/dr[k][b][1]);
-h+=`<p style="text-align:right"><b>하루 합계 <span class="big">${K(all)}</span></b></p><div class="acts"><button class="p" data-a="ok">확인</button><button data-a="cancel">취소</button></div>`}
+h+=`<p style="text-align:right"><b>하루 합계 <span class="big">${K(all)}</span></b></p><p class="mut" style="text-align:right;margin:0"><small>판매·소비 내역은 각 탭에서 입력합니다.</small></p><div class="acts"><button class="p" data-a="ok">확인</button><button data-a="cancel">취소</button></div>`}
 return h+'</div>'}
 
 /* ---------- 렌더·이벤트 ---------- */
 function render(){ids();const a=document.activeElement,k=a&&a.dataset&&a.dataset.k,ss=a&&a.selectionStart;
 const w=document.querySelector('#app .wrap'),dg=document.querySelector('#ov .dlg'),sx=w?w.scrollLeft:0,sy=w?w.scrollTop:0,dy=dg?dg.scrollTop:0,wy=window.scrollY,wx=window.scrollX;
-$('#app').innerHTML=nav()+(tab=='a'?main():daily());
+$('#app').innerHTML=nav()+(tab=='a'?main():tab=='s'?sales():tab=='p'?spendTab():daily());
 $('#ov').innerHTML=pop?popup():'';$('#ov').className=pop?'ov on':'ov';
 const w2=document.querySelector('#app .wrap');if(w2&&tab=='a'){w2.scrollLeft=sx;w2.scrollTop=sy}
 const d2=document.querySelector('#ov .dlg');if(d2)d2.scrollTop=dy;
@@ -209,6 +267,14 @@ else if(a=='mv'){const j=i+ +v;if(j<0||j>=S.chars.length)return;[S.chars[i],S.ch
 else if(a=='del'){if(S.chars.length<2)return;if(delC==i){S.chars.splice(i,1);delC=null}else{delC=i;render();return}}
 else if(a=='chip'){if(c.sel[b]==d){delete c.sel[b];delete c.party[b]}else{if(b<WK&&!c.sel[b]&&cnt(c)>=12)return;c.sel[b]=d;c.party[b]=Math.min(c.party[b]||1,maxp(b,d))}}
 else if(a=='yr'){S.year+=+v}
+else if(a=='st'){sf.t=v}
+else if(a=='ptp'){spf.t=v}
+else if(a=='padd'){addSpend();return}
+else if(a=='pmv'){spm.m+=+v;if(spm.m<1){spm.m=12;spm.y--}if(spm.m>12){spm.m=1;spm.y++}}
+else if(a=='pdel'){const id=t.dataset.id;if(delP==id){S.spend=S.spend.filter(x=>x.id!=id);delP=null}else{delP=id;render();return}}
+else if(a=='sadd'){addSale();return}
+else if(a=='sm'){sm.m+=+v;if(sm.m<1){sm.m=12;sm.y--}if(sm.m>12){sm.m=1;sm.y++}}
+else if(a=='sdel'){const id=t.dataset.id;if(delS==id){S.sales=S.sales.filter(x=>x.id!=id);delS=null}else{delS=id;render();return}}
 else if(a=='cm'){cal.m+=+v;if(cal.m<1){cal.m=12;cal.y--}if(cal.m>12){cal.m=1;cal.y++}render();return}
 else if(a=='day'){pop={date:v,edit:false}}
 else if(a=='close'||a=='cancel'){pop=null}
@@ -230,7 +296,7 @@ else return;
 save();render()});
 document.addEventListener('change',e=>{const t=e.target,a=t.dataset.a;if(!a)return;
 const i=+t.dataset.i,b=+t.dataset.b;
-if(a=='inc')S.chars[i].inc=t.checked;else if(a=='exp')S.exp=t.checked;
+if(a=='inc')S.chars[i].inc=t.checked;else if(a=='exp')S.exp=t.checked;else if(a=='sd'){sf.d=t.value;render();return}else if(a=='pdt'){spf.d=t.value;render();return}else if(a=='shi'){sf.hi=t.value;render();return}else if(a=='sn'){sf.n=+t.value;render();return}else if(a=='fee')S.fee=Math.min(100,Math.max(0,+t.value||0));
 else if(a=='pty')S.chars[i].party[b]=+t.value;
 else if(a=='nm')S.chars[i].name=t.value||'캐릭터'+(i+1);
 else if(a=='acc')S.chars[i].acc=t.value.trim()||'계정1';
@@ -239,9 +305,14 @@ else if(a=='file'){const f=t.files[0];if(!f)return;const r=new FileReader();r.on
 else return;
 save();render()});
 document.addEventListener('input',e=>{const t=e.target,a=t.dataset.a;
-if(a=='rate'){S.rate=Math.max(0,+t.value||0);save();render()}
-else if(a=='nm'){S.chars[+t.dataset.i].name=t.value;save()}});
-document.addEventListener('keydown',e=>{if(e.key=='Escape'&&(pop||menu)){pop=null;menu=false;render()}});
+if(a=='rate'){const c=t.value.replace(/[^\d.]/g,''),pos=t.selectionStart-(t.value.length-c.length);t.value=c;rateRaw=c;S.rate=Math.max(0,+c||0);save();render()}
+else if(a=='nm'){S.chars[+t.dataset.i].name=t.value;save()}
+else if(a=='snm')sf.nm=t.value;
+else if(a=='pnm')spf.nm=t.value;
+else if(a=='pamt'){spf.amt=t.value;$('#pprev').innerHTML=pprevH()}
+else if(a=='hq'||a=='hp'||a=='hn'){const r=+t.dataset.r;sf.h[r][a=='hq'?'q':a=='hp'?'pr':'nm']=t.value;$('#hs'+r).innerHTML=hs(r);$('#prev').innerHTML=prevH()}
+else if(a=='spr'){sf.pr=t.value;$('#prev').innerHTML=prevH()}});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&!e.isComposing&&['snm','spr','hq','hp','hn'].includes(e.target.dataset.a)){addSale();return}if(e.key=='Enter'&&!e.isComposing&&['pnm','pamt'].includes(e.target.dataset.a)){addSpend();return}if(e.key=='Escape'&&(pop||menu)){pop=null;menu=false;render()}});
 $('#file').dataset.a='file';
 render();
 </script></body></html>
